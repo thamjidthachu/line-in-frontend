@@ -2,7 +2,7 @@
 
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
-import { CartProvider, useCart } from "@/lib/cart-context"
+import { useCart } from "@/lib/cart-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -147,8 +147,8 @@ function CartContent() {
               </div>
             </CardContent>
             <CardFooter className="flex-col gap-2">
-              <Button size="lg" className="w-full">
-                Proceed to Checkout
+              <Button size="lg" className="w-full" asChild>
+                <Link href="/checkout">Proceed to Checkout</Link>
               </Button>
               <Button variant="outline" size="lg" className="w-full bg-transparent" asChild>
                 <Link href="/shop">Continue Shopping</Link>
@@ -164,21 +164,19 @@ function CartContent() {
 
 export default function CartPage() {
   return (
-    <CartProvider>
-      <div className="flex min-h-screen flex-col">
-        <Navbar />
-        <main className="flex-1">
-          <div className="border-b border-border bg-secondary/30 py-8">
-            <div className="container mx-auto px-4">
-              <h1 className="text-3xl font-bold">Shopping Cart</h1>
-            </div>
+    <div className="flex min-h-screen flex-col">
+      <Navbar />
+      <main className="flex-1">
+        <div className="border-b border-border bg-secondary/30 py-8">
+          <div className="container mx-auto px-4">
+            <h1 className="text-3xl font-bold">Shopping Cart</h1>
           </div>
-          <div className="container mx-auto px-4 py-8">
-            <CartContent />
-          </div>
-        </main>
-        <Footer />
-      </div>
-    </CartProvider>
+        </div>
+        <div className="container mx-auto px-4 py-8">
+          <CartContent />
+        </div>
+      </main>
+      <Footer />
+    </div>
   )
 }

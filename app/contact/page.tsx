@@ -76,7 +76,7 @@ export default function ContactPage() {
                       <Mail className="mt-1 h-5 w-5 text-primary" />
                       <div>
                         <p className="font-semibold">Email</p>
-                        <p className="text-sm text-muted-foreground">support@linenluxe.com</p>
+                        <p className="text-sm text-muted-foreground">support@Line-Inn.com</p>
                       </div>
                     </div>
 

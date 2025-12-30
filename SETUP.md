@@ -1,4 +1,4 @@
-# LinenLuxe - Premium E-Commerce Platform
+# Line-Inn - Premium E-Commerce Platform
 
 A modern, scalable e-commerce platform built with **Next.js 15**, **React 19**, **TypeScript**, **Tailwind CSS**, and **Radix UI components**.
 

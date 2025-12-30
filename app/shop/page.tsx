@@ -2,7 +2,7 @@
 
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
-import { CartProvider } from "@/lib/cart-context"
+
 import { type Product } from "@/lib/products"
 import { fetchProducts } from "@/lib/api"
 import { ProductCard } from "@/components/product-card"
@@ -78,7 +78,7 @@ export default function ShopPage() {
   }
 
   return (
-    <CartProvider>
+    <>
       <div className="flex min-h-screen flex-col">
         <Navbar />
         <main className="flex-1">
@@ -223,6 +223,6 @@ export default function ShopPage() {
         </main>
         <Footer />
       </div>
-    </CartProvider>
+    </>
   )
 }

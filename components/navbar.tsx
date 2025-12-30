@@ -25,7 +25,7 @@ export function Navbar() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <div className="text-2xl font-bold text-primary">LinenLuxe</div>
+          <div className="text-2xl font-bold text-primary">Line-Inn</div>
         </Link>
 
         {/* Desktop Navigation */}

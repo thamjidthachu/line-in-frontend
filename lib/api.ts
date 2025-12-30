@@ -1,9 +1,10 @@
+import { toast } from "sonner";
 import { Product } from "./products";
 
 const API_BASE_URL = "http://127.0.0.1:8000/api/v1";
 
 // Helper function to get the access token from localStorage
-function getAccessToken(): string | null {
+export function getAccessToken(): string | null {
     if (typeof window !== "undefined") {
         return localStorage.getItem("accessToken");
     }
@@ -11,10 +12,12 @@ function getAccessToken(): string | null {
 }
 
 // Helper function to build headers with Bearer token
-function getHeaders(includeAuth: boolean = true): HeadersInit {
-    const headers: HeadersInit = {
-        "Content-Type": "application/json",
-    };
+export function getHeaders(includeAuth: boolean = true, isMultipart: boolean = false): HeadersInit {
+    const headers: any = {};
+
+    if (!isMultipart) {
+        headers["Content-Type"] = "application/json";
+    }
 
     if (includeAuth) {
         const token = getAccessToken();
@@ -25,6 +28,40 @@ function getHeaders(includeAuth: boolean = true): HeadersInit {
 
     return headers;
 }
+
+export { API_BASE_URL };
+
+export async function apiFetch(url: string, options: RequestInit = {}): Promise<Response> {
+    const response = await fetch(url, options);
+
+    if (response.status === 401) {
+        try {
+            const clone = response.clone();
+            const data = await clone.json();
+
+            if (
+                data.code === "token_not_valid" &&
+                data.messages?.some((m: any) => m.message === "Token is expired")
+            ) {
+                toast.error("Session Expired! Please Login😊");
+                if (typeof window !== "undefined") {
+                    // Clear auth data
+                    localStorage.removeItem("accessToken");
+                    localStorage.removeItem("refreshToken");
+                    localStorage.removeItem("user");
+
+                    // Redirect
+                    window.location.href = "/auth/login";
+                }
+            }
+        } catch (e) {
+            // ignore JSON parse error or other issues
+        }
+    }
+
+    return response;
+}
+
 
 export interface ApiProductFile {
     id: number;
@@ -65,9 +102,22 @@ export interface ApiProductDetail {
     policy: string;
 }
 
+export interface Advertisement {
+    title: string;
+    file: string;
+    link: string;
+}
+
+export interface Favorite {
+    id: number;
+    product: ApiProduct;
+    service_id: number;
+    created_at: string;
+}
+
 export async function fetchProducts(): Promise<Product[]> {
     try {
-        const response = await fetch(`${API_BASE_URL}/products/list/`, {
+        const response = await apiFetch(`${API_BASE_URL}/products/list/`, {
             headers: getHeaders(true),
         });
         if (!response.ok) {
@@ -97,7 +147,7 @@ export async function fetchProducts(): Promise<Product[]> {
 
 export async function fetchProductBySlug(slug: string): Promise<Product | null> {
     try {
-        const response = await fetch(`${API_BASE_URL}/products/${slug}/detail`, {
+        const response = await apiFetch(`${API_BASE_URL}/products/${slug}/detail/`, {
             headers: getHeaders(true),
         });
         if (!response.ok) {
@@ -130,8 +180,8 @@ export async function fetchProductBySlug(slug: string): Promise<Product | null> 
 
 export async function fetchFeaturedProducts(): Promise<Product[]> {
     try {
-        const response = await fetch(`${API_BASE_URL}/products/featured/`, {
-            headers: getHeaders(true),
+        const response = await apiFetch(`${API_BASE_URL}/products/featured/`, {
+            headers: getHeaders(false),
         });
         if (!response.ok) {
             throw new Error(`Failed to fetch featured products: ${response.statusText}`);
@@ -154,6 +204,21 @@ export async function fetchFeaturedProducts(): Promise<Product[]> {
         }));
     } catch (error) {
         console.error("Error fetching featured products:", error);
+        return [];
+    }
+}
+
+export async function fetchAdvertisements(): Promise<Advertisement[]> {
+    try {
+        const response = await apiFetch(`${API_BASE_URL}/products/advertisement/`, {
+            headers: getHeaders(false),
+        });
+        if (!response.ok) {
+            throw new Error("Failed to fetch advertisements");
+        }
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching advertisements:", error);
         return [];
     }
 }
@@ -185,7 +250,7 @@ export interface ReviewsResponse {
 
 export async function fetchProductReviews(slug: string, page: number = 1): Promise<ReviewsResponse> {
     try {
-        const response = await fetch(`${API_BASE_URL}/products/${slug}/reviews/?page=${page}`, {
+        const response = await apiFetch(`${API_BASE_URL}/products/${slug}/reviews/?page=${page}`, {
             headers: getHeaders(true),
         });
         if (!response.ok) {
@@ -200,18 +265,9 @@ export async function fetchProductReviews(slug: string, page: number = 1): Promi
 
 export async function submitProductReview(slug: string, message: string, rating: number): Promise<boolean> {
     try {
-        const token = getAccessToken();
-        if (!token) {
-            console.error("No access token available");
-            return false;
-        }
-
-        const response = await fetch(`${API_BASE_URL}/products/${slug}/reviews/`, {
+        const response = await apiFetch(`${API_BASE_URL}/products/${slug}/reviews/`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
-            },
+            headers: getHeaders(true),
             body: JSON.stringify({ message, rating }),
         });
         return response.ok;
@@ -221,4 +277,56 @@ export async function submitProductReview(slug: string, message: string, rating:
     }
 }
 
+export async function replyToReview(commentId: number, message: string): Promise<boolean> {
+    try {
+        const response = await apiFetch(`${API_BASE_URL}/products/reviews/${commentId}/reply/`, {
+            method: "POST",
+            headers: getHeaders(true),
+            body: JSON.stringify({ message }),
+        });
+        return response.ok;
+    } catch (error) {
+        console.error("Error replying to review:", error);
+        return false;
+    }
+}
 
+export async function fetchFavorites(): Promise<Favorite[]> {
+    try {
+        const response = await apiFetch(`${API_BASE_URL}/products/favorites/list-create/`, {
+            headers: getHeaders(true),
+        });
+        if (!response.ok) return [];
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching favorites:", error);
+        return [];
+    }
+}
+
+export async function addFavorite(serviceId: number): Promise<boolean> {
+    try {
+        const response = await apiFetch(`${API_BASE_URL}/products/favorites/list-create/`, {
+            method: "POST",
+            headers: getHeaders(true),
+            body: JSON.stringify({ service_id: serviceId }),
+        });
+        return response.ok;
+    } catch (error) {
+        console.error("Error adding favorite:", error);
+        return false;
+    }
+}
+
+export async function removeFavorite(serviceId: number): Promise<boolean> {
+    try {
+        const response = await apiFetch(`${API_BASE_URL}/products/favorites/delete/${serviceId}/`, {
+            method: "DELETE",
+            headers: getHeaders(true),
+        });
+        return response.ok;
+    } catch (error) {
+        console.error("Error removing favorite:", error);
+        return false;
+    }
+}

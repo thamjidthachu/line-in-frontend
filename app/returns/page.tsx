@@ -107,7 +107,7 @@ export default function ReturnsPage() {
                   <ol className="space-y-3 text-muted-foreground">
                     <li className="flex gap-3">
                       <span className="font-semibold text-primary">1.</span>
-                      <span>Contact our support team at returns@linenluxe.com</span>
+                      <span>Contact our support team at returns@Line-Inn.com</span>
                     </li>
                     <li className="flex gap-3">
                       <span className="font-semibold text-primary">2.</span>
@@ -142,7 +142,7 @@ export default function ReturnsPage() {
                     place a new order for the desired item.
                   </p>
                   <p className="text-muted-foreground">
-                    If you received a defective or wrong item, contact us immediately at support@linenluxe.com for
+                    If you received a defective or wrong item, contact us immediately at support@Line-Inn.com for
                     priority exchange processing.
                   </p>
                 </CardContent>
@@ -163,7 +163,7 @@ export default function ReturnsPage() {
                   wrong delivery). Customer is responsible for return shipping costs for standard returns.
                 </p>
                 <p className="text-muted-foreground">
-                  For questions about returns, contact us at returns@linenluxe.com or call +1 (555) 123-4567.
+                  For questions about returns, contact us at returns@Line-Inn.com or call +1 (555) 123-4567.
                 </p>
               </CardContent>
             </Card>

@@ -8,22 +8,21 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Loader2 } from "lucide-react"
+import { toast } from "sonner"
 
 export default function RegisterPage() {
     const { register } = useAuth()
     const [isLoading, setIsLoading] = useState(false)
-    const [error, setError] = useState("")
 
     async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault()
         setIsLoading(true)
-        setError("")
 
         const formData = new FormData(event.currentTarget)
 
         // Validate passwords match
         if (formData.get("password") !== formData.get("password2")) {
-            setError("Passwords do not match")
+            toast.error("Passwords do not match")
             setIsLoading(false)
             return
         }
@@ -31,7 +30,7 @@ export default function RegisterPage() {
         try {
             await register(formData)
         } catch (e: any) {
-            setError(e.message || "Registration failed. Please try again.")
+            toast.error(e.message || "Registration failed. Please try again.")
         } finally {
             setIsLoading(false)
         }
@@ -42,7 +41,7 @@ export default function RegisterPage() {
             <div className="w-full max-w-lg space-y-8 rounded-lg border bg-background p-8 shadow-sm">
                 <div className="text-center">
                     <Link href="/" className="text-2xl font-bold text-primary hover:opacity-80">
-                        LinenLuxe
+                        Line-Inn
                     </Link>
                     <h2 className="mt-4 text-2xl font-bold tracking-tight">Create an account</h2>
                     <p className="mt-2 text-sm text-muted-foreground">
@@ -97,7 +96,7 @@ export default function RegisterPage() {
                         </div>
                     </div>
 
-                    {error && <p className="text-sm text-destructive">{error}</p>}
+
 
                     <Button type="submit" className="w-full" disabled={isLoading}>
                         {isLoading ? (

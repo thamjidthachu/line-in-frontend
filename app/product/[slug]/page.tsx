@@ -3,7 +3,7 @@
 import { use, useEffect, useState } from "react"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
-import { CartProvider } from "@/lib/cart-context"
+
 import { fetchProductBySlug } from "@/lib/api"
 import type { Product } from "@/lib/products"
 import { ProductGallery } from "@/components/product/product-gallery"
@@ -42,7 +42,7 @@ export default function ProductDetailPage({
 
     if (loading) {
         return (
-            <CartProvider>
+            <>
                 <div className="flex min-h-screen flex-col">
                     <Navbar />
                     <main className="flex-1">
@@ -54,7 +54,7 @@ export default function ProductDetailPage({
                     </main>
                     <Footer />
                 </div>
-            </CartProvider>
+            </>
         )
     }
 
@@ -63,7 +63,7 @@ export default function ProductDetailPage({
     }
 
     return (
-        <CartProvider>
+        <>
             <div className="flex min-h-screen flex-col">
                 <Navbar />
                 <main className="flex-1">
@@ -112,6 +112,6 @@ export default function ProductDetailPage({
                 </main>
                 <Footer />
             </div>
-        </CartProvider>
+        </>
     )
 }

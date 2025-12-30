@@ -21,7 +21,7 @@ export default function TermsPage() {
                 <section>
                   <h2 className="mb-4 text-2xl font-bold">1. Agreement to Terms</h2>
                   <p className="leading-relaxed text-muted-foreground">
-                    By accessing and using LinenLuxe's website and services, you agree to be bound by these Terms of
+                    By accessing and using Line-Inn's website and services, you agree to be bound by these Terms of
                     Service and all applicable laws and regulations. If you do not agree with any of these terms, you
                     are prohibited from using this site.
                   </p>
@@ -30,7 +30,7 @@ export default function TermsPage() {
                 <section>
                   <h2 className="mb-4 text-2xl font-bold">2. Use License</h2>
                   <p className="leading-relaxed text-muted-foreground">
-                    Permission is granted to temporarily download one copy of the materials on LinenLuxe's website for
+                    Permission is granted to temporarily download one copy of the materials on Line-Inn's website for
                     personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of
                     title.
                   </p>
@@ -72,7 +72,7 @@ export default function TermsPage() {
                 <section>
                   <h2 className="mb-4 text-2xl font-bold">7. Limitation of Liability</h2>
                   <p className="leading-relaxed text-muted-foreground">
-                    LinenLuxe shall not be liable for any indirect, incidental, special, or consequential damages
+                    Line-Inn shall not be liable for any indirect, incidental, special, or consequential damages
                     arising out of or in connection with the use of our products or services.
                   </p>
                 </section>
@@ -80,7 +80,7 @@ export default function TermsPage() {
                 <section>
                   <h2 className="mb-4 text-2xl font-bold">8. Contact Information</h2>
                   <p className="leading-relaxed text-muted-foreground">
-                    Questions about the Terms of Service should be sent to us at legal@linenluxe.com.
+                    Questions about the Terms of Service should be sent to us at legal@Line-Inn.com.
                   </p>
                 </section>
               </div>

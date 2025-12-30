@@ -113,7 +113,7 @@ export default function ShippingPage() {
                   <li>P.O. boxes are accepted for standard shipping only</li>
                   <li>International customers are responsible for any customs fees, duties, or taxes</li>
                   <li>Tracking information is provided for all orders</li>
-                  <li>For shipping questions, contact us at shipping@linenluxe.com</li>
+                  <li>For shipping questions, contact us at shipping@Line-Inn.com</li>
                 </ul>
               </CardContent>
             </Card>
