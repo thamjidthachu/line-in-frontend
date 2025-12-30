@@ -13,11 +13,16 @@ export interface LoginResponse {
 // ... existing types ...
 
 export async function loginUser(data: FormData): Promise<any> {
-    // Login shouldn't necessarily use apiFetch because 401 just means wrong password, not expired token
-    // But it's fine if we use it, though "Token is expired" response is unlikely here.
+    // Convert FormData to JSON object for Django backend
+    const loginData = {
+        username: data.get('username'),
+        password: data.get('password'),
+    };
+
     const response = await fetch(`${API_BASE_URL}/auth/login/`, {
         method: "POST",
-        body: data,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(loginData),
     });
 
     if (!response.ok) {
@@ -29,9 +34,21 @@ export async function loginUser(data: FormData): Promise<any> {
 }
 
 export async function registerUser(data: FormData): Promise<any> {
+    // Convert FormData to JSON object for Django backend
+    const registerData = {
+        username: data.get('username'),
+        email: data.get('email'),
+        password: data.get('password'),
+        password_confirm: data.get('password2'),  // Form uses password2
+        full_name: data.get('full_name') || '',
+        phone: data.get('phone') || '',
+        gender: data.get('gender') || '',
+    };
+
     const response = await fetch(`${API_BASE_URL}/auth/register/`, {
         method: "POST",
-        body: data,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(registerData),
     });
 
     if (!response.ok) {

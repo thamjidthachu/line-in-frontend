@@ -79,6 +79,7 @@ const nextConfig = {
   webpack: (config, { isServer }) => {
     return config
   },
-}
 
-export default nextConfig
+  // Turbopack configuration for Next.js 16+
+  turbopack: {},
+}

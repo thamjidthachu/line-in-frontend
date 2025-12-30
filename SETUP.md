@@ -27,19 +27,26 @@ A modern, scalable e-commerce platform built with **Next.js 15**, **React 19**, 
 ```bash
 git clone <repository-url>
 cd e-commerce
-yarn install
+pnpm install
 ```
 
-2. **Environment variables** (optional):
+2. **Environment variables**:
 
 ```bash
-cp .env.example .env.local
+cp .env.local.example .env.local
+```
+
+Update `.env.local` with your backend URL (default should work for local development):
+```env
+NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000/api/v1
+NEXT_IMAGE_UNOPTIMIZED=true
+NEXT_IGNORE_TYPE_ERRORS=false
 ```
 
 3. **Start development server**:
 
 ```bash
-yarn dev
+pnpm dev
 ```
 
 The app will be available at `http://localhost:3000` with **hot reload enabled**.

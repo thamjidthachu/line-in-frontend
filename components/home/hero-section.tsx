@@ -2,8 +2,8 @@
 
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import Image from "next/image"
 import { ArrowRight } from "lucide-react"
+import { PixelImage } from "@/components/ui/pixel-image"
 
 export function HeroSection() {
   return (
@@ -43,12 +43,9 @@ export function HeroSection() {
 
           <div className="relative min-h-[400px] lg:min-h-[600px] w-full items-center justify-center flex">
             <div className="relative aspect-[3/4] w-full max-w-md overflow-hidden rounded-2xl shadow-2xl">
-              <Image
-                src="/elegant-linen-dress-violet-tones.jpg"
-                alt="Premium Linen Collection"
-                fill
-                className="object-cover"
-                priority
+              <PixelImage
+                src="/hero-section-image.jpg"
+                grid="8x8"
               />
             </div>
             {/* Decorative Background Blob */}

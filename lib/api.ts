@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 import { Product } from "./products";
 
-const API_BASE_URL = "http://127.0.0.1:8000/api/v1";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000/api/v1";
 
 // Helper function to get the access token from localStorage
 export function getAccessToken(): string | null {
