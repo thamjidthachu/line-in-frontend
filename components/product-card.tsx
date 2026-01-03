@@ -20,7 +20,7 @@ interface ProductCardProps {
 export function ProductCard({ product }: ProductCardProps) {
   const { addToCart, addToWishlist, isInWishlist } = useCart()
   const [isAdding, setIsAdding] = useState(false)
-  const inWishlist = isInWishlist(product.id)
+  const inWishlist = product.isFavorite || isInWishlist(product.id)
 
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault()

@@ -5,12 +5,19 @@ import { createContext, useContext, useState, useEffect, useCallback } from "rea
 import type { Product } from "./products"
 import { useAuth } from "./auth-context"
 import {
-  fetchActiveCart, addToCart as apiAddToCart, removeCartItem, updateCartItem as apiUpdateCartItem, clearCart as apiClearCart
+  fetchActiveCart,
+  addToCart as apiAddToCart,
+  removeCartItem,
+  updateCartItem as apiUpdateCartItem,
+  clearCart as apiClearCart,
+  type ApiCart,
+  type ApiCartItem,
 } from "./cart-api"
 import {
   fetchFavorites, addFavorite as apiAddFavorite, removeFavorite as apiRemoveFavorite
 } from "./api"
 import { toast } from "sonner"
+import { getImageUrl } from "./utils"
 
 interface CartItem extends Product {
   quantity: number
@@ -30,6 +37,8 @@ interface CartContextType {
   isInWishlist: (productId: string) => boolean
   clearCart: () => Promise<void>
   cartTotal: number
+  cartTax: number
+  cartGrandTotal: number
   cartItemsCount: number
   refreshCart: () => Promise<void>
 }
@@ -37,10 +46,11 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined)
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, user } = useAuth()
+  const { isAuthenticated } = useAuth()
   const [cart, setCart] = useState<CartItem[]>([])
   const [wishlist, setWishlist] = useState<Product[]>([])
   const [isInitialized, setIsInitialized] = useState(false)
+  const [cartTotals, setCartTotals] = useState({ subtotal: 0, tax: 0, total: 0 })
 
   // Helper to parse special options
   const parseOptions = (specialRequests: string | null) => {
@@ -55,36 +65,68 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     return { selectedSize, selectedColor };
   }
 
+  const mapApiCart = (cartData: ApiCart) => {
+    const apiItems = cartData.cart_items || cartData.items || []
+    const mappedItems: CartItem[] = apiItems.map((item: ApiCartItem) => {
+      const { selectedSize, selectedColor } = parseOptions(item.special_requests ?? null)
+
+      // Accept nested product, product_* fields, or service_* fields
+      const product = item.product || {
+        id: item.product_id ?? item.service_id ?? 0,
+        name: item.product_name ?? item.service_name ?? "Unknown",
+        price: item.product_price ?? item.service_price ?? "0",
+        slug: item.product_slug ?? item.service_slug ?? "",
+        image: item.product_image ?? item.service_image,
+        description: item.product_description ?? (item as any).service_description ?? "",
+      }
+
+      const priceNumber = typeof item.unit_price === "string"
+        ? parseFloat(item.unit_price)
+        : item.unit_price
+      const productPrice = typeof product.price === "string"
+        ? parseFloat(product.price)
+        : product.price
+
+      const imageUrl = getImageUrl(product.image || "/placeholder.jpg")
+
+      return {
+        id: product.id?.toString() ?? "",
+        cartItemId: item.id,
+        slug: product.slug || product.id?.toString() || "",
+        name: product.name || "Product",
+        description: product.description || "",
+        price: priceNumber || productPrice || 0,
+        images: [imageUrl],
+        category: "women",
+        colors: [selectedColor],
+        sizes: [selectedSize],
+        rating: item.rating || 0,
+        reviews: item.review_count || 0,
+        inStock: item.is_active ?? true,
+        quantity: item.quantity,
+        selectedSize,
+        selectedColor,
+      }
+    })
+
+    setCart(mappedItems)
+    setCartTotals({
+      subtotal: typeof cartData.subtotal === "string" ? parseFloat(cartData.subtotal) : cartData.subtotal,
+      tax: typeof cartData.tax === "string" ? parseFloat(cartData.tax) : cartData.tax,
+      total: typeof cartData.total_amount === "string" ? parseFloat(cartData.total_amount) : cartData.total_amount,
+    })
+  }
+
   // Fetch cart from backend
   const refreshCart = useCallback(async () => {
     if (!isAuthenticated) return;
 
     const cartData = await fetchActiveCart();
-    if (cartData && cartData.items) {
-      const mappedItems: CartItem[] = cartData.items.map(item => {
-        const { selectedSize, selectedColor } = parseOptions(item.special_requests);
-        return {
-          id: item.service_id.toString(),
-          cartItemId: item.id,
-          slug: item.service_slug,
-          name: item.service_name,
-          description: item.service_description,
-          price: parseFloat(item.service_price),
-          images: [item.service_image],
-          category: "women", // default
-          colors: [selectedColor], // default context
-          sizes: [selectedSize], // default context
-          rating: item.rating || 0,
-          reviews: item.review_count || 0,
-          inStock: true,
-          quantity: item.quantity,
-          selectedSize,
-          selectedColor,
-        };
-      });
-      setCart(mappedItems);
+    if (cartData && (Array.isArray(cartData.cart_items) || Array.isArray(cartData.items))) {
+      mapApiCart(cartData);
     } else {
       setCart([]);
+      setCartTotals({ subtotal: 0, tax: 0, total: 0 });
     }
   }, [isAuthenticated]);
 
@@ -143,15 +185,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const addToCart = async (product: Product, size: string, color: string, quantity: number) => {
     if (isAuthenticated) {
-      const success = await apiAddToCart({
-        service_id: Number(product.id),
+      const defaultDate = new Date().toISOString().slice(0, 10)
+      const cartResponse = await apiAddToCart({
+        product_id: Number(product.id),
         quantity,
+        booking_date: defaultDate,
         special_requests: `Size: ${size}, Color: ${color}`
       });
-      if (success) {
+      if (cartResponse && (Array.isArray(cartResponse.cart_items) || Array.isArray(cartResponse.items))) {
         toast.success("Added to cart");
-        refreshCart();
+        mapApiCart(cartResponse);
       } else {
+        await refreshCart(); // attempt to resync in case backend created cart
         toast.error("Failed to add to cart");
       }
     } else {
@@ -207,10 +252,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         // Optimistic update
         setCart(prev => prev.map(i => i.cartItemId === item.cartItemId ? { ...i, quantity } : i));
 
-        const success = await apiUpdateCartItem(item.cartItemId, { quantity });
-        if (!success) {
+        const updated = await apiUpdateCartItem(item.cartItemId, { quantity });
+        if (!updated) {
           toast.error("Failed to update quantity");
           refreshCart(); // Revert
+        } else {
+          refreshCart();
         }
       }
     } else {
@@ -271,13 +318,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const clearCart = async () => {
     if (isAuthenticated) {
       const success = await apiClearCart();
-      if (success) refreshCart();
+      if (success) {
+        setCart([])
+        setCartTotals({ subtotal: 0, tax: 0, total: 0 })
+      }
     } else {
       setCart([])
     }
   }
 
-  const cartTotal = cart.reduce((total, item) => total + item.price * item.quantity, 0)
+  const computedSubtotal = cart.reduce((total, item) => total + item.price * item.quantity, 0)
+  const cartTotal = cartTotals.subtotal || computedSubtotal
+  const cartTax = cartTotals.tax || cartTotal * 0.08
+  const cartGrandTotal = cartTotals.total || cartTotal + cartTax
   const cartItemsCount = cart.reduce((count, item) => count + item.quantity, 0)
 
   return (
@@ -293,6 +346,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         isInWishlist,
         clearCart,
         cartTotal,
+        cartTax,
+        cartGrandTotal,
         cartItemsCount,
         refreshCart,
       }}

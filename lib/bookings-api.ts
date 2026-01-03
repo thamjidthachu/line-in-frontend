@@ -12,7 +12,7 @@ export interface BookingCreateData {
     number_of_guests: number;
     special_requests?: string;
     products: {
-        product: number; // product ID (service_id)
+        product: number; // product ID (product_id)
         quantity: number;
     }[];
 }

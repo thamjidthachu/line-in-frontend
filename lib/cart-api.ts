@@ -1,44 +1,55 @@
 import { API_BASE_URL, getHeaders, apiFetch } from "./api";
 
-export interface CartItem {
+export interface ApiCartProduct {
     id: number;
-    service_id: number;
-    service_name: string;
-    service_price: string;
-    quantity: number;
-    subtotal: string;
-    service_slug: string;
-    service_image: string;
-    service_duration: number;
-    service_description: string;
-    unit: string;
-    rating: number;
-    review_count: number;
-    is_active: boolean;
-    special_requests: string | null;
-    created_at: string;
+    name: string;
+    price: number | string;
+    slug?: string;
+    image?: string;
 }
 
-export interface Cart {
+export interface ApiCartItem {
+    id: number;
+    product?: ApiCartProduct; // Some responses return service_* fields instead
+    product_id?: number;
+    product_name?: string;
+    product_price?: string;
+    product_slug?: string;
+    product_image?: string;
+    product_description?: string;
+    service_name?: string;
+    service_price?: string;
+    service_slug?: string;
+    service_image?: string;
+    quantity: number;
+    unit_price?: number | string;
+    subtotal?: string;
+    booking_date?: string | null;
+    booking_time?: string | null;
+    special_requests?: string | null;
+    created_at?: string;
+    rating?: number | null;
+    review_count?: number | null;
+    is_active?: boolean;
+}
+
+export interface ApiCart {
     id: number;
     user: number | null;
-    session_id: string | null;
     status: string;
-    subtotal: string;
-    tax: string;
-    total_amount: string;
-    total: string;
-    items: CartItem[];
-    items_count: number;
-    expires_at: string;
-    last_activity: string;
-    created_at: string;
+    cart_items?: ApiCartItem[];
+    items?: ApiCartItem[]; // Backend sometimes returns `items`
+    subtotal: number | string;
+    tax: number | string;
+    total_amount: number | string;
+    is_empty?: boolean;
+    created_at?: string;
 }
 
 export interface AddToCartData {
-    service_id: number;
-    quantity?: number;
-    booking_date?: string; // YYYY-MM-DD
+    product_id: number;
+    quantity: number;
+    booking_date: string; // YYYY-MM-DD
     booking_time?: string; // HH:MM
     special_requests?: string;
 }
@@ -85,7 +96,7 @@ export interface Order {
     order_items: OrderItem[];
 }
 
-export async function fetchActiveCart(): Promise<Cart | null> {
+export async function fetchActiveCart(): Promise<ApiCart | null> {
     try {
         const response = await apiFetch(`${API_BASE_URL}/cart/get-my-cart/`, {
             headers: getHeaders(true),
@@ -98,31 +109,35 @@ export async function fetchActiveCart(): Promise<Cart | null> {
     }
 }
 
-export async function addToCart(data: AddToCartData): Promise<boolean> {
+export async function addToCart(data: AddToCartData): Promise<ApiCart | null> {
     try {
         const response = await apiFetch(`${API_BASE_URL}/cart/add-to-cart/`, {
             method: "POST",
             headers: getHeaders(true),
             body: JSON.stringify(data),
         });
-        return response.ok;
+        if (!response.ok) return null;
+        // API wraps cart in { message, data }
+        const json = await response.json();
+        return json.data || json;
     } catch (error) {
         console.error("Error adding to cart:", error);
-        return false;
+        return null;
     }
 }
 
-export async function updateCartItem(itemId: number, data: UpdateCartItemData): Promise<boolean> {
+export async function updateCartItem(itemId: number, data: UpdateCartItemData): Promise<ApiCartItem | null> {
     try {
         const response = await apiFetch(`${API_BASE_URL}/cart/items/${itemId}/`, {
-            method: "PATCH", // Or PUT, usually PATCH for partial
+            method: "PATCH",
             headers: getHeaders(true),
             body: JSON.stringify(data),
         });
-        return response.ok;
+        if (!response.ok) return null;
+        return await response.json();
     } catch (error) {
         console.error("Error updating cart item:", error);
-        return false;
+        return null;
     }
 }
 
@@ -208,7 +223,7 @@ export async function completeOrderPayment(orderId: number, paymentMethod: strin
     }
 }
 
-export async function getCartDetail(cartId: number): Promise<Cart | null> {
+export async function getCartDetail(cartId: number): Promise<ApiCart | null> {
     try {
         const response = await apiFetch(`${API_BASE_URL}/cart/${cartId}/detail/`, {
             headers: getHeaders(true),

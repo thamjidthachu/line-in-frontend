@@ -45,7 +45,7 @@ export function HeroSection() {
           <div className="relative min-h-[400px] lg:min-h-[600px] w-full items-center justify-center flex">
             <div className="relative aspect-[3/4] w-full max-w-md overflow-hidden rounded-2xl shadow-2xl">
               <PixelImage
-                src={getImageUrl("/placeholder.jpg")}
+                src={getImageUrl("/hero-section-image.jpg")}
                 grid="8x8"
                 className="h-full w-full"
               />

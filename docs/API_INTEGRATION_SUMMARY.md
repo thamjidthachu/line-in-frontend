@@ -132,12 +132,12 @@ All APIs from the Line In Backend API Documentation have been successfully integ
 
 9. **`addFavorite(serviceId: number)`**
    - POST `/products/favorites/list-create/`
-   - Accepts: `service_id`
+   - Accepts: `product_id`
    - Returns: Favorite object
    - Authentication: Required
 
 10. **`removeFavorite(serviceId: number)`**
-    - DELETE `/products/favorites/delete/{service_id}/`
+    - DELETE `/products/favorites/delete/{product_id}/`
     - Returns: Success (204 No Content)
     - Authentication: Required
 
@@ -210,7 +210,7 @@ All APIs from the Line In Backend API Documentation have been successfully integ
 
 2. **`addToCart(data: AddToCartData)`**
    - POST `/cart/add-to-cart/`
-   - Accepts: `service_id`, `quantity`, `booking_date`, `booking_time`, `special_requests`
+   - Accepts: `product_id`, `quantity`, `booking_date`, `booking_time`, `special_requests`
    - Returns: Updated cart
    - Authentication: Required
 

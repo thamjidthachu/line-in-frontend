@@ -24,7 +24,7 @@
 - [x] replyToReview - POST `/products/reviews/{comment_id}/reply/` - Fixed field name (reply)
 - [x] fetchFavorites - GET `/products/favorites/list-create/` - Fixed pagination handling
 - [x] addFavorite - POST `/products/favorites/list-create/` - Fixed to return Favorite or null
-- [x] removeFavorite - DELETE `/products/favorites/delete/{service_id}/` - Implemented
+- [x] removeFavorite - DELETE `/products/favorites/delete/{product_id}/` - Implemented
 
 ## ✅ Bookings Endpoints
 - [x] createBooking - POST `/bookings/create/` - Fixed auth to not required

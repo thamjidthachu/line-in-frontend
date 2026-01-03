@@ -128,7 +128,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8
 ```typescript
 {
   id: number;
-  service_id: number;
+  product_id: number;
   service_name: string;
   service_price: string;
   quantity: number;

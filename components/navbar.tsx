@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import Link from "next/link"
 import { ShoppingCart, Heart, Menu, Search, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -25,7 +26,14 @@ export function Navbar() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <div className="text-2xl font-bold text-primary">Line-Inn</div>
+          <Image
+            src="/logos/logo.svg"
+            alt="Line-Inn logo"
+            width={650}
+            height={250}
+            priority
+            className="h-9 w-auto"
+          />
         </Link>
 
         {/* Desktop Navigation */}

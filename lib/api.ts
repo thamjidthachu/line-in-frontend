@@ -111,7 +111,7 @@ export interface Advertisement {
 export interface Favorite {
     id: number;
     product: ApiProduct;
-    service_id: number;
+    product_id: number;
     created_at: string;
 }
 
@@ -138,6 +138,7 @@ export async function fetchProducts(): Promise<Product[]> {
             rating: item.rating,
             reviews: item.review_count,
             inStock: true, // Default
+            isFavorite: item.is_favorite,
         }));
     } catch (error) {
         console.error("Error fetching products:", error);
@@ -171,6 +172,7 @@ export async function fetchProductBySlug(slug: string): Promise<Product | null> 
             rating: data.rating,
             reviews: data.review_count,
             inStock: data.stock_available > 0,
+            isFavorite: data.is_favorite,
         };
     } catch (error) {
         console.error("Error fetching product detail:", error);
@@ -201,6 +203,7 @@ export async function fetchFeaturedProducts(): Promise<Product[]> {
             rating: item.rating,
             reviews: item.review_count,
             inStock: item.stock_available > 0,
+            isFavorite: item.is_favorite,
         }));
     } catch (error) {
         console.error("Error fetching featured products:", error);
@@ -311,7 +314,7 @@ export async function addFavorite(serviceId: number): Promise<Favorite | null> {
         const response = await apiFetch(`${API_BASE_URL}/products/favorites/list-create/`, {
             method: "POST",
             headers: getHeaders(true),
-            body: JSON.stringify({ service_id: serviceId }),
+            body: JSON.stringify({ product_id: serviceId }),
         });
         if (!response.ok) return null;
         return await response.json();
