@@ -47,6 +47,7 @@ export function HeroSection() {
               <PixelImage
                 src={getImageUrl("/placeholder.jpg")}
                 grid="8x8"
+                className="h-full w-full"
               />
             </div>
             {/* Decorative Background Blob */}

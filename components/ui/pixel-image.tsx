@@ -21,6 +21,7 @@ type PredefinedGridKey = keyof typeof DEFAULT_GRIDS
 
 interface PixelImageProps {
   src: string
+  className?: string
   grid?: PredefinedGridKey
   customGrid?: Grid
   grayscaleAnimation?: boolean
@@ -31,6 +32,7 @@ interface PixelImageProps {
 
 export const PixelImage = ({
   src,
+  className,
   grid = "6x4",
   grayscaleAnimation = true,
   pixelFadeInDuration = 1000,
@@ -99,7 +101,7 @@ export const PixelImage = ({
   }, [rows, cols, delays])
 
   return (
-    <div className="relative h-72 w-72 select-none md:h-96 md:w-96">
+    <div className={cn("relative h-72 w-72 select-none md:h-96 md:w-96", className)}>
       {pieces.map((piece, index) => (
         <div
           key={index}
@@ -117,7 +119,7 @@ export const PixelImage = ({
             src={src}
             alt={`Pixel image piece ${index + 1}`}
             className={cn(
-              "z-1 rounded-[2.5rem] object-cover",
+              "z-1 h-full w-full rounded-[2.5rem] object-cover",
               grayscaleAnimation && (showColor ? "grayscale-0" : "grayscale")
             )}
             style={{
