@@ -10,6 +10,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import type { Product } from "@/lib/products"
 import { useCart } from "@/lib/cart-context"
+import { getImageUrl } from "@/lib/utils"
 import { useState } from "react"
 
 interface ProductCardProps {
@@ -38,7 +39,7 @@ export function ProductCard({ product }: ProductCardProps) {
       <Card className="group overflow-hidden transition-all hover:shadow-lg">
         <div className="relative aspect-square overflow-hidden bg-muted">
           <Image
-            src={product.images[0] || "/placeholder.svg"}
+            src={getImageUrl(product.images[0])}
             alt={product.name}
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"

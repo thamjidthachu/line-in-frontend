@@ -263,17 +263,18 @@ export async function fetchProductReviews(slug: string, page: number = 1): Promi
     }
 }
 
-export async function submitProductReview(slug: string, message: string, rating: number): Promise<boolean> {
+export async function submitProductReview(slug: string, message: string, rating: number): Promise<Review | null> {
     try {
         const response = await apiFetch(`${API_BASE_URL}/products/${slug}/reviews/`, {
             method: "POST",
             headers: getHeaders(true),
             body: JSON.stringify({ message, rating }),
         });
-        return response.ok;
+        if (!response.ok) return null;
+        return await response.json();
     } catch (error) {
         console.error("Error submitting review:", error);
-        return false;
+        return null;
     }
 }
 
@@ -282,7 +283,7 @@ export async function replyToReview(commentId: number, message: string): Promise
         const response = await apiFetch(`${API_BASE_URL}/products/reviews/${commentId}/reply/`, {
             method: "POST",
             headers: getHeaders(true),
-            body: JSON.stringify({ message }),
+            body: JSON.stringify({ reply: message }),
         });
         return response.ok;
     } catch (error) {
@@ -297,24 +298,26 @@ export async function fetchFavorites(): Promise<Favorite[]> {
             headers: getHeaders(true),
         });
         if (!response.ok) return [];
-        return await response.json();
+        const data = await response.json();
+        return data.results || data;
     } catch (error) {
         console.error("Error fetching favorites:", error);
         return [];
     }
 }
 
-export async function addFavorite(serviceId: number): Promise<boolean> {
+export async function addFavorite(serviceId: number): Promise<Favorite | null> {
     try {
         const response = await apiFetch(`${API_BASE_URL}/products/favorites/list-create/`, {
             method: "POST",
             headers: getHeaders(true),
             body: JSON.stringify({ service_id: serviceId }),
         });
-        return response.ok;
+        if (!response.ok) return null;
+        return await response.json();
     } catch (error) {
         console.error("Error adding favorite:", error);
-        return false;
+        return null;
     }
 }
 

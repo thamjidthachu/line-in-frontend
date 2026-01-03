@@ -4,7 +4,7 @@ import { useState } from "react"
 import Image from "next/image"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { cn, getImageUrl } from "@/lib/utils"
 
 interface ProductGalleryProps {
   images: string[]
@@ -27,7 +27,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
       {/* Main Image */}
       <div className="relative aspect-square overflow-hidden rounded-lg bg-muted">
         <Image
-          src={images[selectedImage] || "/placeholder.svg"}
+          src={getImageUrl(images[selectedImage])}
           alt={`${productName} - Image ${selectedImage + 1}`}
           fill
           className="object-cover"
@@ -77,7 +77,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
               )}
             >
               <Image
-                src={image || "/placeholder.svg"}
+                src={getImageUrl(image)}
                 alt={`${productName} - Thumbnail ${index + 1}`}
                 fill
                 className="object-cover"

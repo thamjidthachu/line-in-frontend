@@ -142,7 +142,7 @@ export async function removeCartItem(itemId: number): Promise<boolean> {
 export async function clearCart(): Promise<boolean> {
     try {
         const response = await apiFetch(`${API_BASE_URL}/cart/clear-cart/`, {
-            method: "POST",
+            method: "DELETE",
             headers: getHeaders(true),
         });
         return response.ok;
@@ -173,7 +173,8 @@ export async function fetchOrders(): Promise<Order[]> {
             headers: getHeaders(true),
         });
         if (!response.ok) return [];
-        return await response.json();
+        const data = await response.json();
+        return data.results || data;
     } catch (error) {
         console.error("Error fetching orders:", error);
         return [];
@@ -193,15 +194,29 @@ export async function fetchOrderDetail(orderId: number): Promise<Order | null> {
     }
 }
 
-export async function completeOrderPayment(orderId: number): Promise<boolean> {
+export async function completeOrderPayment(orderId: number, paymentMethod: string, transactionId?: string): Promise<boolean> {
     try {
         const response = await apiFetch(`${API_BASE_URL}/cart/orders/${orderId}/complete-payment/`, {
             method: "POST",
             headers: getHeaders(true),
+            body: JSON.stringify({ payment_method: paymentMethod, transaction_id: transactionId }),
         });
         return response.ok;
     } catch (error) {
         console.error("Error completing order payment:", error);
         return false;
+    }
+}
+
+export async function getCartDetail(cartId: number): Promise<Cart | null> {
+    try {
+        const response = await apiFetch(`${API_BASE_URL}/cart/${cartId}/detail/`, {
+            headers: getHeaders(true),
+        });
+        if (!response.ok) return null;
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching cart detail:", error);
+        return null;
     }
 }

@@ -12,12 +12,18 @@ const nextConfig = {
   // Image optimization
   images: {
     // Disable optimization for static export or simple deployments
-    unoptimized: process.env.NEXT_IMAGE_UNOPTIMIZED === 'true',
+    unoptimized: true,
     // Domains for remote images (if needed)
     remotePatterns: [
       {
         protocol: 'http',
         hostname: '127.0.0.1',
+        port: '8000',
+        pathname: '/media/**',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
         port: '8000',
         pathname: '/media/**',
       },

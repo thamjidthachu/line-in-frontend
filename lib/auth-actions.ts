@@ -19,9 +19,9 @@ export async function loginUser(data: FormData): Promise<any> {
         password: data.get('password'),
     };
 
-    const response = await fetch(`${API_BASE_URL}/auth/login/`, {
+    const response = await apiFetch(`${API_BASE_URL}/auth/login/`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: getHeaders(false),
         body: JSON.stringify(loginData),
     });
 
@@ -39,15 +39,15 @@ export async function registerUser(data: FormData): Promise<any> {
         username: data.get('username'),
         email: data.get('email'),
         password: data.get('password'),
-        password_confirm: data.get('password2'),  // Form uses password2
+        password2: data.get('password2'),  // API expects password2
         full_name: data.get('full_name') || '',
         phone: data.get('phone') || '',
         gender: data.get('gender') || '',
     };
 
-    const response = await fetch(`${API_BASE_URL}/auth/register/`, {
+    const response = await apiFetch(`${API_BASE_URL}/auth/register/`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: getHeaders(false),
         body: JSON.stringify(registerData),
     });
 
@@ -59,22 +59,29 @@ export async function registerUser(data: FormData): Promise<any> {
     return response.json();
 }
 
-export async function checkAuth(): Promise<boolean> {
+export async function checkUsernameEmail(username?: string, email?: string): Promise<boolean> {
     try {
-        const response = await apiFetch(`${API_BASE_URL}/auth/user-check/`, {
-            headers: getHeaders(true),
+        const params = new URLSearchParams();
+        if (username) params.append('username', username);
+        if (email) params.append('email', email);
+        const response = await apiFetch(`${API_BASE_URL}/auth/user-check/?${params.toString()}`, {
+            headers: getHeaders(false),
         });
-        return response.ok;
+        if (!response.ok) return false;
+        const data = await response.json();
+        return data.status === true; // true if user exists
     } catch (error) {
         return false;
     }
 }
 
-export async function logoutUser(): Promise<boolean> {
+export async function logoutUser(refresh?: string): Promise<boolean> {
     try {
+        const refreshToken = refresh || (typeof window !== 'undefined' ? localStorage.getItem('refreshToken') : null);
         const response = await apiFetch(`${API_BASE_URL}/auth/logout/`, {
             method: "POST",
             headers: getHeaders(true),
+            body: JSON.stringify({ refresh: refreshToken }),
         });
         return response.ok;
     } catch {
@@ -96,11 +103,11 @@ export async function refreshToken(refresh: string): Promise<any> {
     }
 }
 
-export async function googleSignup(token: string, additionalData?: any): Promise<any> {
-    const response = await fetch(`${API_BASE_URL}/auth/google/signup/`, {
+export async function googleSignup(idToken: string): Promise<any> {
+    const response = await apiFetch(`${API_BASE_URL}/auth/google/signup/`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, ...additionalData }),
+        headers: getHeaders(false),
+        body: JSON.stringify({ id_token: idToken }),
     });
     if (!response.ok) {
         const err = await response.text();
@@ -109,11 +116,11 @@ export async function googleSignup(token: string, additionalData?: any): Promise
     return response.json();
 }
 
-export async function googleSignin(token: string): Promise<any> {
-    const response = await fetch(`${API_BASE_URL}/auth/google/signin/`, {
+export async function googleSignin(idToken: string): Promise<any> {
+    const response = await apiFetch(`${API_BASE_URL}/auth/google/signin/`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token }),
+        headers: getHeaders(false),
+        body: JSON.stringify({ id_token: idToken }),
     });
     if (!response.ok) {
         const err = await response.text();
@@ -187,9 +194,9 @@ export async function updateAvatar(file: File): Promise<any> {
 
 export async function forgotPassword(username: string): Promise<boolean> {
     try {
-        const response = await fetch(`${API_BASE_URL}/auth/forgot-password/`, {
+        const response = await apiFetch(`${API_BASE_URL}/auth/forgot-password/`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: getHeaders(false),
             body: JSON.stringify({ username }),
         });
         return response.ok;
@@ -198,12 +205,12 @@ export async function forgotPassword(username: string): Promise<boolean> {
     }
 }
 
-export async function resetPassword(data: any): Promise<boolean> {
+export async function resetPassword(username: string, token: string, newPassword: string): Promise<boolean> {
     try {
-        const response = await fetch(`${API_BASE_URL}/auth/reset-password/`, {
+        const response = await apiFetch(`${API_BASE_URL}/auth/reset-password/`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
+            headers: getHeaders(false),
+            body: JSON.stringify({ username, token, new_password: newPassword }),
         });
         return response.ok;
     } catch {

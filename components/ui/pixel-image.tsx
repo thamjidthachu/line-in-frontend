@@ -40,6 +40,8 @@ export const PixelImage = ({
 }: PixelImageProps) => {
   const [isVisible, setIsVisible] = useState(false)
   const [showColor, setShowColor] = useState(false)
+  const [delays, setDelays] = useState<number[]>([])
+  const [isHydrated, setIsHydrated] = useState(false)
 
   const MIN_GRID = 1
   const MAX_GRID = 16
@@ -62,12 +64,19 @@ export const PixelImage = ({
   }, [customGrid, grid])
 
   useEffect(() => {
+    setIsHydrated(true)
     setIsVisible(true)
+    
+    // Generate random delays only on client after hydration
+    const total = rows * cols
+    const newDelays = Array.from({ length: total }, () => Math.random() * maxAnimationDelay)
+    setDelays(newDelays)
+    
     const colorTimeout = setTimeout(() => {
       setShowColor(true)
     }, colorRevealDelay)
     return () => clearTimeout(colorTimeout)
-  }, [colorRevealDelay])
+  }, [rows, cols, maxAnimationDelay, colorRevealDelay])
 
   const pieces = useMemo(() => {
     const total = rows * cols
@@ -82,13 +91,12 @@ export const PixelImage = ({
         ${col * (100 / cols)}% ${(row + 1) * (100 / rows)}%
       )`
 
-      const delay = Math.random() * maxAnimationDelay
       return {
         clipPath,
-        delay,
+        delay: delays[index] || 0,
       }
     })
-  }, [rows, cols, maxAnimationDelay])
+  }, [rows, cols, delays])
 
   return (
     <div className="relative h-72 w-72 select-none md:h-96 md:w-96">

@@ -1,13 +1,9 @@
 import { API_BASE_URL, getHeaders, apiFetch } from "./api";
 
 export interface ContactMessageData {
-    first_name: string;
-    last_name: string;
+    name: string;
     email: string;
-    phone: string;
     subject: string;
-    preferred_dates?: string;
-    number_of_guests?: number;
     message: string;
 }
 

@@ -33,21 +33,29 @@ export interface Booking {
     booking_date: string;
     booking_time: string;
     number_of_guests: number;
+    special_requests?: string;
     status: string;
     payment_status: string;
+    subtotal?: string;
+    tax?: string;
     total_amount: string;
     payments: Payment[];
     checkout_url: string | null;
     order: Order | null;
     created_at: string;
     updated_at: string;
+    user?: {
+        id: number;
+        username: string;
+        email: string;
+    };
 }
 
 export async function createBooking(data: BookingCreateData): Promise<Booking | null> {
     try {
         const response = await apiFetch(`${API_BASE_URL}/bookings/create/`, {
             method: "POST",
-            headers: getHeaders(true),
+            headers: getHeaders(false),
             body: JSON.stringify(data),
         });
         if (!response.ok) {
@@ -55,7 +63,8 @@ export async function createBooking(data: BookingCreateData): Promise<Booking | 
             console.error("Booking creation failed:", err);
             throw new Error("Failed to create booking");
         }
-        return await response.json();
+        const result = await response.json();
+        return result.booking || result;
     } catch (error) {
         console.error("Error creating booking:", error);
         return null;
@@ -68,7 +77,8 @@ export async function fetchMyBookings(): Promise<Booking[]> {
             headers: getHeaders(true),
         });
         if (!response.ok) return [];
-        return await response.json();
+        const data = await response.json();
+        return data.results || data;
     } catch (error) {
         console.error("Error fetching my bookings:", error);
         return [];
@@ -78,7 +88,7 @@ export async function fetchMyBookings(): Promise<Booking[]> {
 export async function fetchBookingDetail(bookingNumber: string): Promise<Booking | null> {
     try {
         const response = await apiFetch(`${API_BASE_URL}/bookings/${bookingNumber}/details/`, {
-            headers: getHeaders(true),
+            headers: getHeaders(false),
         });
         if (!response.ok) return null;
         return await response.json();
@@ -88,11 +98,16 @@ export async function fetchBookingDetail(bookingNumber: string): Promise<Booking
     }
 }
 
-export async function cancelBooking(bookingNumber: string): Promise<boolean> {
+export async function cancelBooking(bookingNumber: string, reason?: string, email?: string): Promise<boolean> {
     try {
+        const body: any = {};
+        if (reason) body.reason = reason;
+        if (email) body.email = email;
+        
         const response = await apiFetch(`${API_BASE_URL}/bookings/${bookingNumber}/cancel/`, {
             method: "POST",
-            headers: getHeaders(true),
+            headers: getHeaders(false),
+            body: JSON.stringify(body),
         });
         return response.ok;
     } catch (error) {
@@ -101,11 +116,11 @@ export async function cancelBooking(bookingNumber: string): Promise<boolean> {
     }
 }
 
-export async function createCheckoutSession(bookingNumber: string): Promise<{ sessionId: string, url: string } | null> {
+export async function createCheckoutSession(bookingNumber: string): Promise<{ checkout_url: string, session_id: string } | null> {
     try {
         const response = await apiFetch(`${API_BASE_URL}/bookings/${bookingNumber}/create-checkout-session/`, {
             method: "POST",
-            headers: getHeaders(true),
+            headers: getHeaders(false),
         });
         if (!response.ok) return null;
         return await response.json();
@@ -117,12 +132,58 @@ export async function createCheckoutSession(bookingNumber: string): Promise<{ se
 
 export async function verifyPayment(sessionId: string): Promise<boolean> {
     try {
-        const response = await apiFetch(`${API_BASE_URL}/bookings/verify-payment/?session_id=${sessionId}`, {
-            headers: getHeaders(true),
+        const response = await apiFetch(`${API_BASE_URL}/bookings/verify-payment/`, {
+            method: "POST",
+            headers: getHeaders(false),
+            body: JSON.stringify({ session_id: sessionId }),
         });
         return response.ok;
     } catch (error) {
         console.error("Error verifying payment:", error);
         return false;
+    }
+}
+
+export async function getBookingPaymentStatus(bookingNumber: string): Promise<any> {
+    try {
+        const response = await apiFetch(`${API_BASE_URL}/bookings/${bookingNumber}/payment-status/`, {
+            headers: getHeaders(false),
+        });
+        if (!response.ok) return null;
+        return await response.json();
+    } catch (error) {
+        console.error("Error getting payment status:", error);
+        return null;
+    }
+}
+
+export async function createManualPayment(bookingNumber: string, amount: number, paymentMethod: string, transactionId?: string, notes?: string): Promise<Payment | null> {
+    try {
+        const response = await apiFetch(`${API_BASE_URL}/bookings/${bookingNumber}/payment/`, {
+            method: "POST",
+            headers: getHeaders(false),
+            body: JSON.stringify({ amount, payment_method: paymentMethod, transaction_id: transactionId, notes }),
+        });
+        if (!response.ok) return null;
+        return await response.json();
+    } catch (error) {
+        console.error("Error creating manual payment:", error);
+        return null;
+    }
+}
+
+export async function updateBookingStatus(bookingNumber: string, status: string, adminNotes?: string): Promise<Booking | null> {
+    try {
+        const response = await apiFetch(`${API_BASE_URL}/bookings/${bookingNumber}/update-status/`, {
+            method: "PATCH",
+            headers: getHeaders(true),
+            body: JSON.stringify({ status, admin_notes: adminNotes }),
+        });
+        if (!response.ok) return null;
+        const result = await response.json();
+        return result.booking || result;
+    } catch (error) {
+        console.error("Error updating booking status:", error);
+        return null;
     }
 }
