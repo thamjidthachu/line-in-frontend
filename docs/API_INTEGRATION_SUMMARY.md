@@ -247,7 +247,7 @@ All APIs from the Line In Backend API Documentation have been successfully integ
    - Authentication: Required
 
 9. **`completeOrderPayment(orderId: number, paymentMethod: string, transactionId?: string)`**
-   - POST `/cart/orders/{order_id}/complete-payment/`
+   - POST `/cart/orders/{order_number}/complete-payment/`
    - Accepts: `payment_method`, `transaction_id`
    - Returns: Success status
    - Authentication: Required

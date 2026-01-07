@@ -72,12 +72,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
       // Accept nested product, product_* fields, or service_* fields
       const product = item.product || {
-        id: item.product_id ?? item.service_id ?? 0,
-        name: item.product_name ?? item.service_name ?? "Unknown",
-        price: item.product_price ?? item.service_price ?? "0",
-        slug: item.product_slug ?? item.service_slug ?? "",
-        image: item.product_image ?? item.service_image,
-        description: item.product_description ?? (item as any).service_description ?? "",
+        id: item.product_id ?? 0,
+        name: item.product_name ?? "Unknown",
+        price: item.product_price ?? "0",
+        slug: item.product_slug ?? "",
+        image: item.product_image,
+        description: item.product_description ?? "",
       }
 
       const priceNumber = typeof item.unit_price === "string"
@@ -94,7 +94,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         cartItemId: item.id,
         slug: product.slug || product.id?.toString() || "",
         name: product.name || "Product",
-        description: product.description || "",
+        description: (product as any).description || item.product_description || "",
         price: priceNumber || productPrice || 0,
         images: [imageUrl],
         category: "women",
@@ -135,20 +135,23 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     if (!isAuthenticated) return;
 
     const favs = await fetchFavorites();
-    const mappedFavs: Product[] = favs.map(f => ({
-      id: f.product.id.toString(),
-      slug: f.product.slug,
-      name: f.product.name,
-      description: f.product.synopsis,
-      price: parseFloat(f.product.price),
-      images: f.product.files.map(file => file.images),
-      category: "women",
-      colors: ["Default"],
-      sizes: ["One Size"],
-      rating: f.product.rating,
-      reviews: f.product.review_count,
-      inStock: true
-    }));
+    const mappedFavs: Product[] = favs.map(f => {
+      if (!f.product) return null
+      return {
+        id: f.product.id.toString(),
+        slug: f.product.slug,
+        name: f.product.name,
+        description: f.product.synopsis,
+        price: parseFloat(f.product.price),
+        images: f.product.files?.map(file => file.images) || [],
+        category: "women",
+        colors: ["Default"],
+        sizes: ["One Size"],
+        rating: f.product.rating,
+        reviews: f.product.review_count,
+        inStock: true
+      }
+    }).filter((p): p is Product => p !== null)
     setWishlist(mappedFavs);
   }, [isAuthenticated]);
 

@@ -91,7 +91,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8
 - `POST /checkout/` - Checkout and create order
 - `GET /orders/` - Get user's orders
 - `GET /orders/{id}/` - Get order details
-- `POST /orders/{id}/complete-payment/` - Complete payment
+- `POST /orders/{order_number}/complete-payment/` - Complete payment
 
 ### Bookings (`/api/v1/bookings/`)
 - `POST /create/` - Create a booking

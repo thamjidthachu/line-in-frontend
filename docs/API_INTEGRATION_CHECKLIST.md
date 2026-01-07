@@ -45,8 +45,8 @@
 - [x] clearCart - DELETE `/cart/clear-cart/` - Fixed HTTP method (DELETE not POST)
 - [x] checkoutCart - POST `/cart/checkout/` - Implemented
 - [x] fetchOrders - GET `/cart/orders/` - Fixed pagination handling
-- [x] fetchOrderDetail - GET `/cart/orders/{order_id}/` - Implemented
-- [x] completeOrderPayment - POST `/cart/orders/{order_id}/complete-payment/` - Fixed to include parameters
+- [x] fetchOrderDetail - GET `/cart/orders/{order_number}/` - Implemented
+- [x] completeOrderPayment - POST `/cart/orders/{order_number}/complete-payment/` - Fixed to include parameters
 - [x] getCartDetail - GET `/cart/{cart_id}/detail/` - New function added
 
 ## ✅ Contacts Endpoints

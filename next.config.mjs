@@ -75,14 +75,17 @@ const nextConfig = {
   },
 
   // Logging configuration
-  logging: {
-    fetches: {
-      fullUrl: true,
-    },
-  },
+
 
   // Webpack configuration for custom loaders if needed
-  webpack: (config, { isServer }) => {
+  webpack: (config, { dev, isServer }) => {
+    if (dev) {
+      config.watchOptions = {
+        poll: 1000,
+        aggregateTimeout: 300,
+        ignored: ['**/node_modules', '**/.git', '**/.next'],
+      }
+    }
     return config
   },
 

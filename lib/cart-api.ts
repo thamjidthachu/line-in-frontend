@@ -78,22 +78,24 @@ export interface OrderItem {
 }
 
 export interface Order {
-    id: number;
+    id?: number;
     order_number: string;
-    user: number | null;
-    customer_name: string;
-    customer_email: string;
-    customer_phone: string;
+    user?: number | null;
+    customer_name?: string;
+    customer_email?: string;
+    customer_phone?: string;
     status: string;
-    payment_status: string;
-    subtotal: string;
-    tax: string;
+    payment_status?: string;
+    subtotal?: string;
+    tax?: string;
     total_amount: string;
-    order_date: string;
-    checkout_date: string;
-    fulfillment_date: string | null;
-    special_instructions: string;
-    order_items: OrderItem[];
+    order_date?: string;
+    checkout_date?: string;
+    fulfillment_date?: string | null;
+    special_instructions?: string;
+    order_items?: OrderItem[];
+    created_at?: string;
+    total_items?: number;
 }
 
 export async function fetchActiveCart(): Promise<ApiCart | null> {
@@ -167,7 +169,7 @@ export async function clearCart(): Promise<boolean> {
     }
 }
 
-export async function checkoutCart(data: CheckoutData): Promise<Order | null> {
+export async function checkoutCart(data: CheckoutData): Promise<{ order: Order; stripe_checkout_url?: string } | null> {
     try {
         const response = await apiFetch(`${API_BASE_URL}/cart/checkout/`, {
             method: "POST",
@@ -196,9 +198,9 @@ export async function fetchOrders(): Promise<Order[]> {
     }
 }
 
-export async function fetchOrderDetail(orderId: number): Promise<Order | null> {
+export async function fetchOrderDetail(orderNumber: string): Promise<Order | null> {
     try {
-        const response = await apiFetch(`${API_BASE_URL}/cart/orders/${orderId}/`, {
+        const response = await apiFetch(`${API_BASE_URL}/cart/orders/${orderNumber}/`, {
             headers: getHeaders(true),
         });
         if (!response.ok) return null;
@@ -209,9 +211,35 @@ export async function fetchOrderDetail(orderId: number): Promise<Order | null> {
     }
 }
 
-export async function completeOrderPayment(orderId: number, paymentMethod: string, transactionId?: string): Promise<boolean> {
+export async function fetchBookingDetail(bookingNumber: string): Promise<any | null> {
     try {
-        const response = await apiFetch(`${API_BASE_URL}/cart/orders/${orderId}/complete-payment/`, {
+        const response = await apiFetch(`${API_BASE_URL}/bookings/${bookingNumber}/details/`, {
+            headers: getHeaders(true),
+        });
+        if (!response.ok) return null;
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching booking detail:", error);
+        return null;
+    }
+}
+
+export async function checkBookingPaymentStatus(bookingNumber: string): Promise<any | null> {
+    try {
+        const response = await apiFetch(`${API_BASE_URL}/bookings/${bookingNumber}/payment-status/`, {
+            headers: getHeaders(true),
+        });
+        if (!response.ok) return null;
+        return await response.json();
+    } catch (error) {
+        console.error("Error checking booking payment status:", error);
+        return null;
+    }
+}
+
+export async function completeOrderPayment(orderNumber: string | number, paymentMethod: string, transactionId?: string): Promise<boolean> {
+    try {
+        const response = await apiFetch(`${API_BASE_URL}/cart/orders/${orderNumber}/complete-payment/`, {
             method: "POST",
             headers: getHeaders(true),
             body: JSON.stringify({ payment_method: paymentMethod, transaction_id: transactionId }),

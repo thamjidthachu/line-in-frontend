@@ -50,6 +50,17 @@ export default function RootLayout({
         <Providers>
           {children}
         </Providers>
+        <div className="fixed bottom-1 left-1 z-50 flex h-6 w-6 items-center justify-center rounded-full bg-gray-800 p-3 font-mono text-xs text-white opacity-40 hover:opacity-100">
+          <div className="block sm:hidden">xs</div>
+          <div className="hidden sm:block md:hidden">sm</div>
+          <div className="hidden md:block lg:hidden">md</div>
+          <div className="hidden lg:block xl:hidden">lg</div>
+          <div className="hidden xl:block 2xl:hidden">xl</div>
+          <div className="hidden 2xl:block 3xl:hidden">2xl</div>
+          <div className="hidden 3xl:block 4xl:hidden">3xl</div>
+          <div className="hidden 4xl:block 5xl:hidden">4xl</div>
+          <div className="hidden 5xl:block">5xl</div>
+        </div>
         <Analytics />
       </body>
     </html>

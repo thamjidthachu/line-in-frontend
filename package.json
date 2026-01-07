@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "setup": "node setup.js",
-    "dev": "next dev --turbo",
+    "dev": "NODE_OPTIONS='--no-deprecation' next dev --webpack",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint . --ext .ts,.tsx",

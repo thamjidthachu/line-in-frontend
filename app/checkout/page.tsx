@@ -41,15 +41,17 @@ export default function CheckoutPage() {
         setLoading(true)
 
         try {
-            const order = await checkoutCart(formData)
+            const response = await checkoutCart(formData)
 
-            if (order) {
-                toast.success("Order placed successfully!")
-                await refreshCart()
-                // Redirect to order confirmation or my account
-                // Since we don't have a confirmation page yet, let's redirect to shop with a success query
-                // Or better, create a simple confirmation page. For now, redirect to /shop
-                router.push("/shop")
+            if (response) {
+                if (response.stripe_checkout_url) {
+                    toast.success("Redirecting to payment...")
+                    window.location.href = response.stripe_checkout_url
+                } else {
+                    toast.success("Order placed successfully!")
+                    await refreshCart()
+                    router.push("/shop")
+                }
             } else {
                 toast.error("Failed to place order.")
             }

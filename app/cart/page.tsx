@@ -45,62 +45,64 @@ function CartContent() {
             <CardHeader>
               <CardTitle>Shopping Cart ({cart.length} items)</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
               {cart.map((item) => (
                 <div key={`${item.id}-${item.selectedSize}-${item.selectedColor}`}>
-                  <div className="flex gap-4">
+                  <div className="flex flex-col gap-4 sm:flex-row">
                     <Link
                       href={`/product/${item.slug}`}
-                      className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-md bg-muted"
+                      className="relative h-48 w-full sm:h-24 sm:w-24 flex-shrink-0 overflow-hidden rounded-md bg-muted self-center sm:self-start"
                     >
                       <Image src={item.images[0] || "/placeholder.svg"} alt={item.name} fill className="object-cover" />
                     </Link>
 
-                    <div className="flex flex-1 flex-col">
-                      <div className="flex justify-between">
-                        <div className="flex-1">
-                          <Link href={`/product/${item.slug}`} className="font-semibold hover:text-primary">
+                    <div className="flex flex-1 flex-col justify-between gap-4">
+                      <div className="flex flex-col justify-between gap-2 sm:flex-row">
+                        <div className="flex-1 space-y-1">
+                          <Link href={`/product/${item.slug}`} className="font-semibold hover:text-primary line-clamp-1">
                             {item.name}
                           </Link>
                           <p className="text-sm text-muted-foreground">
                             Color: {item.selectedColor} | Size: {item.selectedSize}
                           </p>
                         </div>
-                        <p className="font-semibold">${item.price}</p>
+                        <p className="font-semibold text-lg sm:text-base">${item.price}</p>
                       </div>
 
-                      <div className="mt-2 flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-8 w-8 bg-transparent"
-                            onClick={() =>
-                              updateQuantity(item.id, item.selectedSize, item.selectedColor, item.quantity - 1)
-                            }
-                            disabled={item.quantity <= 1}
-                          >
-                            <Minus className="h-3 w-3" />
-                          </Button>
-                          <span className="w-8 text-center font-medium">{item.quantity}</span>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-8 w-8 bg-transparent"
-                            onClick={() =>
-                              updateQuantity(item.id, item.selectedSize, item.selectedColor, item.quantity + 1)
-                            }
-                          >
-                            <Plus className="h-3 w-3" />
-                          </Button>
+                      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center rounded-md border">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 rounded-none"
+                              onClick={() =>
+                                updateQuantity(item.id, item.selectedSize, item.selectedColor, item.quantity - 1)
+                              }
+                              disabled={item.quantity <= 1}
+                            >
+                              <Minus className="h-3 w-3" />
+                            </Button>
+                            <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 rounded-none"
+                              onClick={() =>
+                                updateQuantity(item.id, item.selectedSize, item.selectedColor, item.quantity + 1)
+                              }
+                            >
+                              <Plus className="h-3 w-3" />
+                            </Button>
+                          </div>
                         </div>
 
-                        <div className="flex items-center gap-4">
-                          <p className="font-bold">${(item.price * item.quantity).toFixed(2)}</p>
+                        <div className="flex items-center justify-between sm:gap-4">
+                          <p className="font-bold sm:hidden">Total: ${(item.price * item.quantity).toFixed(2)}</p>
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-destructive hover:text-destructive"
+                            className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
                             onClick={() => removeFromCart(item.id, item.selectedSize, item.selectedColor)}
                           >
                             <Trash2 className="h-4 w-4" />
@@ -109,7 +111,7 @@ function CartContent() {
                       </div>
                     </div>
                   </div>
-                  <Separator className="mt-4" />
+                  <Separator className="mt-6" />
                 </div>
               ))}
             </CardContent>

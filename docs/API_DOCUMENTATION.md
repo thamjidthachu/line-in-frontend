@@ -1224,14 +1224,14 @@ page_size=integer (optional, default 10)
 ---
 
 ### 8. Get Order Details
-- **URL:** `/api/v1/cart/orders/{order_id}/`
+- **URL:** `/api/v1/cart/orders/{order_number}/`
 - **Method:** `GET`
 - **Authentication:** Required (JWT)
 - **Description:** Get detailed information about a specific order
 
 **Path Parameters:**
 ```
-order_id: integer (order ID, required)
+order_number: string (order number, required)
 ```
 
 **Response (200 - OK):**
@@ -1267,14 +1267,14 @@ order_id: integer (order ID, required)
 ---
 
 ### 9. Complete Order Payment
-- **URL:** `/api/v1/cart/orders/{order_id}/complete-payment/`
+- **URL:** `/api/v1/cart/orders/{order_number}/complete-payment/`
 - **Method:** `POST`
 - **Authentication:** Required (JWT)
 - **Description:** Complete payment for an order
 
 **Path Parameters:**
 ```
-order_id: integer (order ID, required)
+order_number: string (order number, required)
 ```
 
 **Request Body:**
