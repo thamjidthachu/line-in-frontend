@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button"
+import { Globe } from "@/components/ui/globe"
 import Link from "next/link"
 import { Leaf, Truck, Shield } from "lucide-react"
 
@@ -21,6 +22,19 @@ export function BannerSection() {
             </Button>
           </div>
         </div>
+      </section>
+
+      {/* Globe Banner */}
+      <section className="relative flex h-[800px] w-full flex-col items-center overflow-hidden border-y border-border bg-secondary/30 pt-20">
+        <div className="relative z-10 flex flex-col items-center gap-4 px-4 text-center">
+          <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
+            Sourced Globally
+          </h2>
+          <p className="max-w-[600px] text-lg text-muted-foreground">
+            We partner with sustainable farms worldwide to bring you the finest linen, reducing our carbon footprint one garment at a time.
+          </p>
+        </div>
+        <Globe className="top-48 opacity-50 transition-all duration-1000 md:opacity-100" />
       </section>
 
       {/* Features Banner */}
