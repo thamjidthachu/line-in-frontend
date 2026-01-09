@@ -87,11 +87,11 @@ export function Navbar() {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    Profile
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile">Profile</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    Orders
+                  <DropdownMenuItem asChild>
+                    <Link href="/orders">Orders</Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => logout()} className="text-red-500 hover:text-red-600 focus:text-red-600">

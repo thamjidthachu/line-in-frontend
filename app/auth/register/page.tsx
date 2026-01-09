@@ -10,12 +10,50 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2 } from "lucide-react"
 import { toast } from "sonner"
 
+import { checkUsernameEmail } from "@/lib/auth-actions"
+
 export default function RegisterPage() {
     const { register } = useAuth()
     const [isLoading, setIsLoading] = useState(false)
+    const [usernameError, setUsernameError] = useState("")
+    const [emailError, setEmailError] = useState("")
+
+    const handleUsernameBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+        const value = e.target.value
+        if (!value) {
+            setUsernameError("")
+            return
+        }
+        const exists = await checkUsernameEmail(value, undefined)
+        if (exists) {
+            setUsernameError("Username is already taken")
+        } else {
+            setUsernameError("")
+        }
+    }
+
+    const handleEmailBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+        const value = e.target.value
+        if (!value) {
+            setEmailError("")
+            return
+        }
+        const exists = await checkUsernameEmail(undefined, value)
+        if (exists) {
+            setEmailError("Email is already registered")
+        } else {
+            setEmailError("")
+        }
+    }
 
     async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault()
+
+        if (usernameError || emailError) {
+            toast.error("Please fix the errors before submitting")
+            return
+        }
+
         setIsLoading(true)
 
         const formData = new FormData(event.currentTarget)
@@ -57,13 +95,32 @@ export default function RegisterPage() {
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="username">Username</Label>
-                            <Input id="username" name="username" placeholder="johndoe" required disabled={isLoading} />
+                            <Input
+                                id="username"
+                                name="username"
+                                placeholder="johndoe"
+                                required
+                                disabled={isLoading}
+                                onBlur={handleUsernameBlur}
+                                className={usernameError ? "border-destructive focus-visible:ring-destructive" : ""}
+                            />
+                            {usernameError && <p className="text-xs text-destructive">{usernameError}</p>}
                         </div>
                     </div>
 
                     <div className="space-y-2">
                         <Label htmlFor="email">Email</Label>
-                        <Input id="email" name="email" type="email" placeholder="name@example.com" required disabled={isLoading} />
+                        <Input
+                            id="email"
+                            name="email"
+                            type="email"
+                            placeholder="name@example.com"
+                            required
+                            disabled={isLoading}
+                            onBlur={handleEmailBlur}
+                            className={emailError ? "border-destructive focus-visible:ring-destructive" : ""}
+                        />
+                        {emailError && <p className="text-xs text-destructive">{emailError}</p>}
                     </div>
 
                     <div className="grid gap-4 md:grid-cols-2">

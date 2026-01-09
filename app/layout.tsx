@@ -38,6 +38,7 @@ export const metadata: Metadata = {
 }
 
 import { Providers } from "./providers"
+import { SmoothCursor } from "@/components/ui/smooth-cursor"
 
 export default function RootLayout({
   children,
@@ -48,6 +49,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${geist.variable} ${geistMono.variable} font-sans antialiased`} suppressHydrationWarning>
         <Providers>
+          <SmoothCursor />
           {children}
         </Providers>
         <div className="fixed bottom-1 left-1 z-50 flex h-6 w-6 items-center justify-center rounded-full bg-gray-800 p-3 font-mono text-xs text-white opacity-40 hover:opacity-100">

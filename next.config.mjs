@@ -46,6 +46,7 @@ const nextConfig = {
 
   // Header configuration for security and caching
   headers: async () => {
+    if (process.env.NODE_ENV === 'development') return []
     return [
       {
         source: '/:path*',
@@ -79,7 +80,7 @@ const nextConfig = {
 
   // Webpack configuration for custom loaders if needed
   webpack: (config, { dev, isServer }) => {
-    if (dev) {
+    if (dev && process.env.NEXT_POLL) {
       config.watchOptions = {
         poll: 1000,
         aggregateTimeout: 300,
