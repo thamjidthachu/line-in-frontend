@@ -8,22 +8,59 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Loader2 } from "lucide-react"
+import { toast } from "sonner"
+
+import { checkUsernameEmail } from "@/lib/auth-actions"
 
 export default function RegisterPage() {
     const { register } = useAuth()
     const [isLoading, setIsLoading] = useState(false)
-    const [error, setError] = useState("")
+    const [usernameError, setUsernameError] = useState("")
+    const [emailError, setEmailError] = useState("")
+
+    const handleUsernameBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+        const value = e.target.value
+        if (!value) {
+            setUsernameError("")
+            return
+        }
+        const exists = await checkUsernameEmail(value, undefined)
+        if (exists) {
+            setUsernameError("Username is already taken")
+        } else {
+            setUsernameError("")
+        }
+    }
+
+    const handleEmailBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+        const value = e.target.value
+        if (!value) {
+            setEmailError("")
+            return
+        }
+        const exists = await checkUsernameEmail(undefined, value)
+        if (exists) {
+            setEmailError("Email is already registered")
+        } else {
+            setEmailError("")
+        }
+    }
 
     async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault()
+
+        if (usernameError || emailError) {
+            toast.error("Please fix the errors before submitting")
+            return
+        }
+
         setIsLoading(true)
-        setError("")
 
         const formData = new FormData(event.currentTarget)
 
         // Validate passwords match
         if (formData.get("password") !== formData.get("password2")) {
-            setError("Passwords do not match")
+            toast.error("Passwords do not match")
             setIsLoading(false)
             return
         }
@@ -31,7 +68,7 @@ export default function RegisterPage() {
         try {
             await register(formData)
         } catch (e: any) {
-            setError(e.message || "Registration failed. Please try again.")
+            toast.error(e.message || "Registration failed. Please try again.")
         } finally {
             setIsLoading(false)
         }
@@ -42,7 +79,7 @@ export default function RegisterPage() {
             <div className="w-full max-w-lg space-y-8 rounded-lg border bg-background p-8 shadow-sm">
                 <div className="text-center">
                     <Link href="/" className="text-2xl font-bold text-primary hover:opacity-80">
-                        LinenLuxe
+                        Line-Inn
                     </Link>
                     <h2 className="mt-4 text-2xl font-bold tracking-tight">Create an account</h2>
                     <p className="mt-2 text-sm text-muted-foreground">
@@ -58,13 +95,32 @@ export default function RegisterPage() {
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="username">Username</Label>
-                            <Input id="username" name="username" placeholder="johndoe" required disabled={isLoading} />
+                            <Input
+                                id="username"
+                                name="username"
+                                placeholder="johndoe"
+                                required
+                                disabled={isLoading}
+                                onBlur={handleUsernameBlur}
+                                className={usernameError ? "border-destructive focus-visible:ring-destructive" : ""}
+                            />
+                            {usernameError && <p className="text-xs text-destructive">{usernameError}</p>}
                         </div>
                     </div>
 
                     <div className="space-y-2">
                         <Label htmlFor="email">Email</Label>
-                        <Input id="email" name="email" type="email" placeholder="name@example.com" required disabled={isLoading} />
+                        <Input
+                            id="email"
+                            name="email"
+                            type="email"
+                            placeholder="name@example.com"
+                            required
+                            disabled={isLoading}
+                            onBlur={handleEmailBlur}
+                            className={emailError ? "border-destructive focus-visible:ring-destructive" : ""}
+                        />
+                        {emailError && <p className="text-xs text-destructive">{emailError}</p>}
                     </div>
 
                     <div className="grid gap-4 md:grid-cols-2">
@@ -97,7 +153,7 @@ export default function RegisterPage() {
                         </div>
                     </div>
 
-                    {error && <p className="text-sm text-destructive">{error}</p>}
+
 
                     <Button type="submit" className="w-full" disabled={isLoading}>
                         {isLoading ? (

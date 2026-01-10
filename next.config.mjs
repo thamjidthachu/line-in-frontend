@@ -12,12 +12,18 @@ const nextConfig = {
   // Image optimization
   images: {
     // Disable optimization for static export or simple deployments
-    unoptimized: process.env.NEXT_IMAGE_UNOPTIMIZED === 'true',
+    unoptimized: true,
     // Domains for remote images (if needed)
     remotePatterns: [
       {
         protocol: 'http',
         hostname: '127.0.0.1',
+        port: '8000',
+        pathname: '/media/**',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
         port: '8000',
         pathname: '/media/**',
       },
@@ -40,6 +46,7 @@ const nextConfig = {
 
   // Header configuration for security and caching
   headers: async () => {
+    if (process.env.NODE_ENV === 'development') return []
     return [
       {
         source: '/:path*',
@@ -53,22 +60,38 @@ const nextConfig = {
     ]
   },
 
+  // Rewrites to proxy media requests to Django backend
+  rewrites: async () => {
+    return [
+      {
+        source: '/media/:path*',
+        destination: 'http://127.0.0.1:8000/media/:path*',
+      },
+    ]
+  },
+
   // Environment variables prefix for client-side
   env: {
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
   },
 
   // Logging configuration
-  logging: {
-    fetches: {
-      fullUrl: true,
-    },
-  },
+
 
   // Webpack configuration for custom loaders if needed
-  webpack: (config, { isServer }) => {
+  webpack: (config, { dev, isServer }) => {
+    if (dev && process.env.NEXT_POLL) {
+      config.watchOptions = {
+        poll: 1000,
+        aggregateTimeout: 300,
+        ignored: ['**/node_modules', '**/.git', '**/.next'],
+      }
+    }
     return config
   },
+
+  // Turbopack configuration for Next.js 16+
+  turbopack: {},
 }
 
 export default nextConfig

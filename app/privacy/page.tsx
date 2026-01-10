@@ -59,7 +59,7 @@ export default function PrivacyPage() {
                   <p className="leading-relaxed text-muted-foreground">
                     You have the right to access, correct, or delete your personal information. You may also object to
                     or restrict certain processing of your data. To exercise these rights, please contact us at
-                    privacy@linenluxe.com.
+                    privacy@Line-Inn.com.
                   </p>
                 </section>
 
@@ -75,7 +75,7 @@ export default function PrivacyPage() {
                 <section>
                   <h2 className="mb-4 text-2xl font-bold">7. Contact Us</h2>
                   <p className="leading-relaxed text-muted-foreground">
-                    If you have any questions about this Privacy Policy, please contact us at privacy@linenluxe.com or
+                    If you have any questions about this Privacy Policy, please contact us at privacy@Line-Inn.com or
                     by mail at 123 Linen Street, New York, NY 10001.
                   </p>
                 </section>

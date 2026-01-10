@@ -8,25 +8,30 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Loader2 } from "lucide-react"
 import { useSearchParams } from "next/navigation"
+import { toast } from "sonner"
 
 export default function LoginPage() {
     const { login } = useAuth()
     const [isLoading, setIsLoading] = useState(false)
-    const [error, setError] = useState("")
     const searchParams = useSearchParams()
     const registered = searchParams.get("registered")
+
+    useEffect(() => {
+        if (registered) {
+            toast.success("Registration successful! Please sign in.")
+        }
+    }, [registered])
 
     async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault()
         setIsLoading(true)
-        setError("")
 
         const formData = new FormData(event.currentTarget)
         try {
             await login(formData)
             // Redirect handled in context
         } catch (e) {
-            setError("Invalid email or password")
+            toast.error("Invalid email or password")
         } finally {
             setIsLoading(false)
         }
@@ -37,19 +42,13 @@ export default function LoginPage() {
             <div className="w-full max-w-md space-y-8 rounded-lg border bg-background p-8 shadow-sm">
                 <div className="text-center">
                     <Link href="/" className="text-2xl font-bold text-primary hover:opacity-80">
-                        LinenLuxe
+                        Line-Inn
                     </Link>
                     <h2 className="mt-4 text-2xl font-bold tracking-tight">Welcome back</h2>
                     <p className="mt-2 text-sm text-muted-foreground">
                         Sign in to your account
                     </p>
                 </div>
-
-                {registered && (
-                    <div className="rounded bg-green-50 p-3 text-sm text-green-600 border border-green-200">
-                        Registration successful! Please sign in.
-                    </div>
-                )}
 
                 <form onSubmit={onSubmit} className="space-y-6">
                     <div className="space-y-2">
@@ -82,7 +81,7 @@ export default function LoginPage() {
                         />
                     </div>
 
-                    {error && <p className="text-sm text-destructive">{error}</p>}
+
 
                     <Button type="submit" className="w-full" disabled={isLoading}>
                         {isLoading ? (

@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import Link from "next/link"
 import { ShoppingCart, Heart, Menu, Search, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -25,7 +26,14 @@ export function Navbar() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <div className="text-2xl font-bold text-primary">LinenLuxe</div>
+          <Image
+            src="/logos/logo.svg"
+            alt="Line-Inn logo"
+            width={650}
+            height={250}
+            priority
+            className="h-9 w-auto"
+          />
         </Link>
 
         {/* Desktop Navigation */}
@@ -79,11 +87,11 @@ export function Navbar() {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    Profile
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile">Profile</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    Orders
+                  <DropdownMenuItem asChild>
+                    <Link href="/orders">Orders</Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => logout()} className="text-red-500 hover:text-red-600 focus:text-red-600">
@@ -110,21 +118,83 @@ export function Navbar() {
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px]">
-              <nav className="flex flex-col gap-4 mt-8">
-                <Link href="/" className="text-lg font-medium transition-colors hover:text-primary">
-                  Home
+            <SheetContent side="right" className="flex w-full max-w-xs flex-col gap-0 p-0 sm:max-w-sm">
+              <div className="flex h-16 items-center border-b px-6">
+                <Link href="/" className="flex items-center gap-2">
+                  <Image
+                    src="/logos/logo.svg"
+                    alt="Line-Inn logo"
+                    width={120}
+                    height={40}
+                    priority
+                    className="h-8 w-auto"
+                  />
                 </Link>
-                <Link href="/shop" className="text-lg font-medium transition-colors hover:text-primary">
-                  Shop
-                </Link>
-                <Link href="/contact" className="text-lg font-medium transition-colors hover:text-primary">
-                  Contact
-                </Link>
-                <Link href="/privacy" className="text-lg font-medium transition-colors hover:text-primary">
-                  Privacy Policy
-                </Link>
-              </nav>
+              </div>
+
+              <div className="flex-1 overflow-y-auto px-6 py-6">
+                <nav className="flex flex-col gap-6">
+                  <Link href="/" className="group flex items-center justify-between text-lg font-medium transition-colors hover:text-primary">
+                    Home
+                    <span className="opacity-0 transition-opacity group-hover:opacity-100">→</span>
+                  </Link>
+                  <Link href="/shop" className="group flex items-center justify-between text-lg font-medium transition-colors hover:text-primary">
+                    Shop
+                    <span className="opacity-0 transition-opacity group-hover:opacity-100">→</span>
+                  </Link>
+                  <Link href="/contact" className="group flex items-center justify-between text-lg font-medium transition-colors hover:text-primary">
+                    Contact
+                    <span className="opacity-0 transition-opacity group-hover:opacity-100">→</span>
+                  </Link>
+                  <Link href="/privacy" className="group flex items-center justify-between text-lg font-medium transition-colors hover:text-primary">
+                    Privacy Policy
+                    <span className="opacity-0 transition-opacity group-hover:opacity-100">→</span>
+                  </Link>
+                </nav>
+              </div>
+
+              <div className="border-t bg-muted/40 p-6">
+                {isAuthenticated ? (
+                  <div className="flex flex-col gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+                        <User className="h-5 w-5" />
+                      </div>
+                      <div className="flex flex-col overflow-hidden">
+                        <span className="truncate text-sm font-medium">{user?.full_name || user?.username}</span>
+                        <span className="truncate text-xs text-muted-foreground">{user?.email}</span>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button asChild variant="outline" size="sm" className="w-full justify-start">
+                        <Link href="/profile">Profile</Link>
+                      </Button>
+                      <Button asChild variant="outline" size="sm" className="w-full justify-start">
+                        <Link href="/orders">Orders</Link>
+                      </Button>
+                    </div>
+
+                    <Button onClick={() => logout()} variant="destructive" className="w-full">
+                      Log out
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-3">
+                    <div className="text-sm font-medium text-muted-foreground">
+                      Sign in to your account
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Button asChild variant="outline">
+                        <Link href="/auth/login">Sign In</Link>
+                      </Button>
+                      <Button asChild>
+                        <Link href="/auth/register">Sign Up</Link>
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </SheetContent>
           </Sheet>
         </div>

@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import type { Product } from "@/lib/products"
 import { useCart } from "@/lib/cart-context"
 import { useState } from "react"
-import { cn } from "@/lib/utils"
+import { cn, getImageUrl } from "@/lib/utils"
 
 interface BentoProductCardProps {
   product: Product
@@ -20,7 +20,7 @@ interface BentoProductCardProps {
 export function BentoProductCard({ product, className }: BentoProductCardProps) {
   const { addToCart, addToWishlist, isInWishlist } = useCart()
   const [isAdding, setIsAdding] = useState(false)
-  const inWishlist = isInWishlist(product.id)
+  const inWishlist = product.isFavorite || isInWishlist(product.id)
 
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -44,7 +44,7 @@ export function BentoProductCard({ product, className }: BentoProductCardProps) 
     >
       <div className="relative h-full w-full">
         <Image
-          src={product.images[0] || "/placeholder.svg"}
+          src={getImageUrl(product.images[0])}
           alt={product.name}
           fill
           className="object-cover transition-transform duration-300 group-hover:scale-105"

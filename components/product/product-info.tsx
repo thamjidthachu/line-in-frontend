@@ -21,7 +21,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
   const [selectedSize, setSelectedSize] = useState(product.sizes[0])
   const [selectedColor, setSelectedColor] = useState(product.colors[0])
   const [quantity, setQuantity] = useState(1)
-  const inWishlist = isInWishlist(product.id)
+  const inWishlist = product.isFavorite || isInWishlist(product.id)
 
   const incrementQuantity = () => setQuantity((q) => q + 1)
   const decrementQuantity = () => setQuantity((q) => Math.max(1, q - 1))

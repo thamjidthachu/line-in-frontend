@@ -58,15 +58,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const login = async (formData: FormData) => {
         try {
             const data = await loginUser(formData)
-            // Response structure: { access, refresh, user, message }
-            const access = data.access;
-            const refresh = data.refresh;
+            // Response structure from Django: { access, refresh, user, message }
+            const accessToken = data.access || data.accessToken;
+            const refreshToken = data.refresh || data.refreshToken;
 
-            if (access && refresh) {
-                setAccessToken(access)
-                setRefreshToken(refresh)
-                localStorage.setItem("accessToken", access)
-                localStorage.setItem("refreshToken", refresh)
+            if (accessToken && refreshToken) {
+                setAccessToken(accessToken)
+                setRefreshToken(refreshToken)
+                localStorage.setItem("accessToken", accessToken)
+                localStorage.setItem("refreshToken", refreshToken)
 
                 // Set user from response
                 if (data.user) {

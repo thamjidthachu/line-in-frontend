@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Mail, Phone, MapPin, Clock } from "lucide-react"
+import ContactForm from "@/components/contact-form"
 
 export default function ContactPage() {
   return (
@@ -30,37 +31,7 @@ export default function ContactPage() {
                     <CardTitle>Send us a message</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <form className="space-y-4">
-                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <div className="space-y-2">
-                          <Label htmlFor="firstName">First Name</Label>
-                          <Input id="firstName" placeholder="John" />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="lastName">Last Name</Label>
-                          <Input id="lastName" placeholder="Doe" />
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
-                        <Input id="email" type="email" placeholder="john@example.com" />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="subject">Subject</Label>
-                        <Input id="subject" placeholder="How can we help?" />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="message">Message</Label>
-                        <Textarea id="message" placeholder="Tell us more about your inquiry..." rows={6} />
-                      </div>
-
-                      <Button size="lg" className="w-full sm:w-auto">
-                        Send Message
-                      </Button>
-                    </form>
+                    <ContactForm />
                   </CardContent>
                 </Card>
               </div>
@@ -76,7 +47,7 @@ export default function ContactPage() {
                       <Mail className="mt-1 h-5 w-5 text-primary" />
                       <div>
                         <p className="font-semibold">Email</p>
-                        <p className="text-sm text-muted-foreground">support@linenluxe.com</p>
+                        <p className="text-sm text-muted-foreground">support@Line-Inn.com</p>
                       </div>
                     </div>
 
@@ -124,3 +95,5 @@ export default function ContactPage() {
     </CartProvider>
   )
 }
+
+

@@ -1,6 +1,8 @@
 "use client"
 
+
 import { Star, User, Loader2, StarHalf } from "lucide-react"
+import { toast } from "sonner"
 import { Progress } from "@/components/ui/progress"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -75,7 +77,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!accessToken) return // Should act as guard
-    if (rating === 0) return alert("Please select a rating")
+    if (rating === 0) return toast.warning("Please select a rating")
 
     setIsSubmitting(true)
     try {
@@ -85,13 +87,13 @@ export function ProductReviews({ product }: ProductReviewsProps) {
         setRating(0)
         setPage(1)
         loadReviews(1) // Reload to show new review
-        alert("Review submitted successfully!")
+        toast.success("Review submitted successfully!")
       } else {
-        alert("Failed to submit review. Please try again.")
+        toast.error("Failed to submit review. Please try again.")
       }
     } catch (error) {
       console.error(error)
-      alert("Error submitting review")
+      toast.error("Error submitting review")
     } finally {
       setIsSubmitting(false)
     }

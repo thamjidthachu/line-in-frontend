@@ -7,7 +7,7 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           {/* Brand */}
           <div className="space-y-4">
-            <div className="text-2xl font-bold text-primary">LinenLuxe</div>
+            <div className="text-2xl font-bold text-primary">Line-Inn</div>
             <p className="text-sm text-muted-foreground leading-relaxed">
               Premium linen clothing for the modern lifestyle. Sustainable, comfortable, and timeless.
             </p>
@@ -93,7 +93,7 @@ export function Footer() {
 
         {/* Bottom */}
         <div className="mt-12 border-t border-border pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} LinenLuxe. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Line-Inn. All rights reserved.</p>
         </div>
       </div>
     </footer>
