@@ -1,0 +1,53 @@
+name: Auto Pull Request Description
+
+on:
+  pull_request:
+    types: [opened, edited]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  update-description:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get commit messages
+        run: |
+          commits=$(gh pr view ${{ github.event.pull_request.number }} --json commits --jq -r '.commits[].messageHeadline' | sed 's/^/- /')
+          echo "COMMITS<<EOF" >> $GITHUB_ENV
+          echo "$commits" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Get suggested reviewers
+        run: |
+          reviewers=$(gh pr view ${{ github.event.pull_request.number }} --json reviewRequests --jq '.reviewRequests[].requestedReviewer.login' | tr '\n' ' ')
+          if [ -z "$reviewers" ]; then
+            reviewers="(none suggested)"
+          fi
+          echo "REVIEWERS<<EOF" >> $GITHUB_ENV
+          echo "$reviewers" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Update PR body
+        run: |
+          gh pr edit ${{ github.event.pull_request.number }} \
+            --body "### DESCRIPTION
+            - ${{ github.event.pull_request.title }}
+
+            ### COMMITS
+            ${COMMITS}
+
+            ### REVIEWERS
+            - ${REVIEWERS}
+
+            ### CHECK LIST
+            - [x] I have performed a self-review of my own code
+            - [x] My changes generate no new warnings
+            - [x] My code follows the style guidelines of this project
+            - [x] I have commented on my code, particularly in hard-to-understand areas"
