@@ -12,4 +12,5 @@ export interface Product {
   reviews: number
   inStock: boolean
   isFavorite?: boolean
+  stock_available?: number
 }

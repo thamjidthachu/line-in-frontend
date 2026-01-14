@@ -78,6 +78,7 @@ export interface ApiProduct {
     rating: number;
     review_count: number;
     is_favorite: boolean;
+    stock_available?: number;
 }
 
 export interface ApiProductDetail {
@@ -115,9 +116,53 @@ export interface Favorite {
     created_at: string;
 }
 
-export async function fetchProducts(): Promise<Product[]> {
+export interface Category {
+    id: number;
+    name: string;
+    slug: string;
+    description: string;
+    icon: string | null;
+}
+
+export async function fetchCategories(): Promise<Category[]> {
     try {
-        const response = await apiFetch(`${API_BASE_URL}/products/list/`, {
+        const response = await apiFetch(`${API_BASE_URL}/products/category/list/`, {
+            headers: getHeaders(false),
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to fetch categories: ${response.statusText}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching categories:", error);
+        return [];
+    }
+}
+
+export async function fetchProducts(
+    categorySlug?: string,
+    sortBy?: string,
+    order?: 'asc' | 'desc'
+): Promise<Product[]> {
+    try {
+        const params = new URLSearchParams();
+
+        if (categorySlug) {
+            params.append('category', categorySlug);
+        }
+
+        if (sortBy) {
+            params.append('sort', sortBy);
+        }
+
+        if (order) {
+            params.append('order', order);
+        }
+
+        const queryString = params.toString();
+        const url = `${API_BASE_URL}/products/list/${queryString ? `?${queryString}` : ''}`;
+
+        const response = await apiFetch(url, {
             headers: getHeaders(true),
         });
         if (!response.ok) {
@@ -137,8 +182,9 @@ export async function fetchProducts(): Promise<Product[]> {
             sizes: ["One Size"], // Default
             rating: item.rating,
             reviews: item.review_count,
-            inStock: true, // Default
+            inStock: (item.stock_available ?? 0) > 0,
             isFavorite: item.is_favorite,
+            stock_available: item.stock_available,
         }));
     } catch (error) {
         console.error("Error fetching products:", error);

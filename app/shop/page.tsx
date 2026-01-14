@@ -4,7 +4,7 @@ import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 
 import { type Product } from "@/lib/products"
-import { fetchProducts } from "@/lib/api"
+import { fetchProducts, fetchCategories, type Category } from "@/lib/api"
 import { ProductCard } from "@/components/product-card"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -20,13 +20,50 @@ export default function ShopPage() {
   const [category, setCategory] = useState("all")
   const [currentPage, setCurrentPage] = useState(1)
   const [productsList, setProductsList] = useState<Product[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
   const itemsPerPage = 8
 
+  // Fetch categories on mount
+  useEffect(() => {
+    async function loadCategories() {
+      try {
+        const data = await fetchCategories()
+        setCategories(data)
+      } catch (error) {
+        console.error("Failed to load categories", error)
+      }
+    }
+    loadCategories()
+  }, [])
+
+  // Fetch products when category or sort changes
   useEffect(() => {
     async function loadProducts() {
+      setLoading(true)
       try {
-        const data = await fetchProducts()
+        const categorySlug = category === "all" ? undefined : category
+
+        // Parse sort option to extract field and order
+        let sortField: string | undefined
+        let sortOrder: 'asc' | 'desc' | undefined
+
+        if (sortBy !== "featured") {
+          const [field, order] = sortBy.split('-')
+
+          // Map UI field names to API field names
+          const fieldMap: Record<string, string> = {
+            'price': 'price',
+            'name': 'name',
+            'stock': 'stock_available',
+            'rating': 'rating'
+          }
+
+          sortField = fieldMap[field]
+          sortOrder = order as 'asc' | 'desc'
+        }
+
+        const data = await fetchProducts(categorySlug, sortField, sortOrder)
         setProductsList(data)
       } catch (error) {
         console.error("Failed to load products", error)
@@ -35,37 +72,17 @@ export default function ShopPage() {
       }
     }
     loadProducts()
-  }, [])
+  }, [category, sortBy])
 
+  // No need for client-side filtering/sorting since it's done by API
   const filteredProducts = useMemo(() => {
-    let filtered = [...productsList]
+    return productsList
+  }, [productsList])
 
-    // Filter by category
-    if (category !== "all") {
-      filtered = filtered.filter((p) => p.category === category)
-    }
-
-    // Sort products
-    switch (sortBy) {
-      case "price-low":
-        filtered.sort((a, b) => a.price - b.price)
-        break
-      case "price-high":
-        filtered.sort((a, b) => b.price - a.price)
-        break
-      case "rating":
-        filtered.sort((a, b) => b.rating - a.rating)
-        break
-      case "name":
-        filtered.sort((a, b) => a.name.localeCompare(b.name))
-        break
-      default:
-        // Keep original order for 'featured'
-        break
-    }
-
-    return filtered
-  }, [category, sortBy, productsList])
+  // Reset to page 1 when category or sort changes
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [category, sortBy])
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
@@ -97,14 +114,16 @@ export default function ShopPage() {
                 <div className="flex items-center gap-2">
                   <Label htmlFor="category">Category:</Label>
                   <Select value={category} onValueChange={setCategory}>
-                    <SelectTrigger id="category" className="w-[180px]">
+                    <SelectTrigger id="category" className="w-[200px]">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Products</SelectItem>
-                      <SelectItem value="men">Men</SelectItem>
-                      <SelectItem value="women">Women</SelectItem>
-                      <SelectItem value="accessories">Accessories</SelectItem>
+                      {categories.map((cat) => (
+                        <SelectItem key={cat.id} value={cat.slug}>
+                          {cat.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -112,15 +131,19 @@ export default function ShopPage() {
                 <div className="flex items-center gap-2">
                   <Label htmlFor="sort">Sort by:</Label>
                   <Select value={sortBy} onValueChange={setSortBy}>
-                    <SelectTrigger id="sort" className="w-[180px]">
+                    <SelectTrigger id="sort" className="w-[200px]">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="featured">Featured</SelectItem>
-                      <SelectItem value="price-low">Price: Low to High</SelectItem>
-                      <SelectItem value="price-high">Price: High to Low</SelectItem>
-                      <SelectItem value="rating">Highest Rated</SelectItem>
-                      <SelectItem value="name">Name: A to Z</SelectItem>
+                      <SelectItem value="price-asc">Price: Low to High</SelectItem>
+                      <SelectItem value="price-desc">Price: High to Low</SelectItem>
+                      <SelectItem value="name-asc">Name: A to Z</SelectItem>
+                      <SelectItem value="name-desc">Name: Z to A</SelectItem>
+                      <SelectItem value="rating-desc">Rating: High to Low</SelectItem>
+                      <SelectItem value="rating-asc">Rating: Low to High</SelectItem>
+                      <SelectItem value="stock-desc">Stock: High to Low</SelectItem>
+                      <SelectItem value="stock-asc">Stock: Low to High</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
