@@ -51,9 +51,7 @@ Retrieve or update secondary profile details.
 - **Method:** `GET` / `PATCH`
 - **Auth Required:** Yes
 - **Fields (Update):**
-  - `nickname` (string)
-  - `date_of_birth` (date: YYYY-MM-DD)
-  - `country` (string)
+  - `username` (string)
   - `bio` (text)
   - `interest_ids` (array of integers) - IDs of product categories
 

@@ -33,24 +33,24 @@
 }
 
 .dark {
-  --background: oklch(0.12 0.01 295);
+  --background: oklch(0.10 0.01 295);
   --foreground: oklch(0.98 0 0);
-  --card: oklch(0.15 0.01 295);
+  --card: oklch(0.17 0.02 295);
   --card-foreground: oklch(0.98 0 0);
-  --popover: oklch(0.15 0.01 295);
+  --popover: oklch(0.17 0.02 295);
   --popover-foreground: oklch(0.98 0 0);
   --primary: oklch(0.65 0.2 295);
   --primary-foreground: oklch(0.98 0 0);
-  --secondary: oklch(0.22 0.02 295);
+  --secondary: oklch(0.25 0.03 295);
   --secondary-foreground: oklch(0.98 0 0);
-  --muted: oklch(0.22 0.02 295);
-  --muted-foreground: oklch(0.65 0.05 295);
+  --muted: oklch(0.25 0.03 295);
+  --muted-foreground: oklch(0.70 0.04 295);
   --accent: oklch(0.55 0.18 295);
   --accent-foreground: oklch(0.98 0 0);
   --destructive: oklch(0.5 0.2 27.325);
   --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.25 0.02 295);
-  --input: oklch(0.25 0.02 295);
+  --border: oklch(0.30 0.03 295);
+  --input: oklch(0.30 0.03 295);
   --ring: oklch(0.65 0.2 295);
   --chart-1: oklch(0.65 0.2 295);
   --chart-2: oklch(0.55 0.18 295);
@@ -99,6 +99,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -111,18 +112,21 @@
   height: 32px;
   display: flex;
   align-items: center;
-  background-color: #5eb6fa; /* Day Sky */
+  background-color: #5eb6fa;
+  /* Day Sky */
   border-radius: 9999px;
   cursor: pointer;
   transition: all 0.5s ease;
   overflow: hidden;
-  box-shadow: inset 0 2px 5px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.5);
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2), 0 2px 5px rgba(255, 255, 255, 0.5);
   border: 2px solid rgba(255, 255, 255, 0.4);
 }
 
 .switch:has(input:checked) {
-  background-color: #1a1a2e; /* Night Sky */
-  border-color: rgba(255, 255, 255, 0.1);
+  background-color: #1a1a2e;
+  /* Night Sky */
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5), 0 0 10px rgba(94, 182, 250, 0.3);
 }
 
 .switch input {
@@ -139,17 +143,19 @@
   left: 3px;
   width: 22px;
   height: 22px;
-  background: radial-gradient(circle at 30% 30%, #ffd700, #ffa500); /* Sun */
+  background: radial-gradient(circle at 30% 30%, #ffd700, #ffa500);
+  /* Sun */
   border-radius: 50%;
   transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-  box-shadow: 0 0 10px #ffeb3b, inset 0 0 5px rgba(255,255,255,0.5);
+  box-shadow: 0 0 10px #ffeb3b, inset 0 0 5px rgba(255, 255, 255, 0.5);
   z-index: 20;
 }
 
 .switch:has(input:checked) .sunmoon {
   left: calc(100% - 25px);
-  background: radial-gradient(circle at 30% 30%, #f4f6f0, #d0d0d0); /* Moon */
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5), inset 0 -2px 5px rgba(0,0,0,0.1);
+  background: radial-gradient(circle at 30% 30%, #f4f6f0, #d0d0d0);
+  /* Moon */
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5), inset 0 -2px 5px rgba(0, 0, 0, 0.1);
 }
 
 /* Clouds Container */
@@ -185,7 +191,7 @@
   position: absolute;
   opacity: 1;
   transition: all 0.5s ease;
-  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.1));
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.1));
 }
 
 .switch:has(input:checked) .cloud {
@@ -193,12 +199,44 @@
   transform: translateY(20px);
 }
 
-.cloud-1 { top: 6px; left: 35px; width: 18px; animation: float 3s infinite ease-in-out; }
-.cloud-2 { top: 16px; left: 15px; width: 14px; animation: float 4s infinite ease-in-out reverse; }
-.cloud-3 { top: 4px; left: 10px; width: 12px; animation: float 5s infinite ease-in-out 1s; opacity: 0.8; }
-.cloud-4 { top: 12px; left: 45px; width: 10px; animation: float 3.5s infinite ease-in-out 0.5s; opacity: 0.7; }
+.cloud-1 {
+  top: 6px;
+  left: 35px;
+  width: 18px;
+  animation: float 3s infinite ease-in-out;
+}
+
+.cloud-2 {
+  top: 16px;
+  left: 15px;
+  width: 14px;
+  animation: float 4s infinite ease-in-out reverse;
+}
+
+.cloud-3 {
+  top: 4px;
+  left: 10px;
+  width: 12px;
+  animation: float 5s infinite ease-in-out 1s;
+  opacity: 0.8;
+}
+
+.cloud-4 {
+  top: 12px;
+  left: 45px;
+  width: 10px;
+  animation: float 3.5s infinite ease-in-out 0.5s;
+  opacity: 0.7;
+}
 
 @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-2px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-2px);
+  }
 }

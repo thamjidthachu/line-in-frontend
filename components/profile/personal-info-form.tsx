@@ -30,12 +30,10 @@ export function PersonalInfoForm({ profile, onUpdate }: PersonalInfoFormProps) {
     const [formData, setFormData] = useState({
         full_name: profile?.user?.full_name || "",
         username: profile?.user?.username || "",
-        nickname: profile?.nickname || "",
+        username: profile?.username || "",
         email: profile?.user?.email || "",
         phone: profile?.user?.phone || "",
-        date_of_birth: profile?.date_of_birth || "",
         gender: profile?.user?.gender || "O",
-        country: profile?.country || "",
     })
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,8 +52,8 @@ export function PersonalInfoForm({ profile, onUpdate }: PersonalInfoFormProps) {
         const file = e.target.files?.[0]
         if (file) {
             setLoading(true)
-            const newAvatar = await updateAvatar(file)
-            if (newAvatar) {
+            const success = await updateAvatar(file)
+            if (success) {
                 toast.success("Avatar updated successfully")
                 onUpdate()
             } else {
@@ -78,9 +76,7 @@ export function PersonalInfoForm({ profile, onUpdate }: PersonalInfoFormProps) {
             })
 
             const profileSuccess = await updateProfile({
-                nickname: formData.nickname,
-                date_of_birth: formData.date_of_birth,
-                country: formData.country,
+                username: formData.username,
             })
 
             if (coreSuccess && profileSuccess) {
@@ -148,25 +144,13 @@ export function PersonalInfoForm({ profile, onUpdate }: PersonalInfoFormProps) {
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="nickname">Nickname</Label>
+                    <Label htmlFor="username">Username</Label>
                     <Input
-                        id="nickname"
-                        name="nickname"
-                        value={formData.nickname}
+                        id="username"
+                        name="username"
+                        value={formData.username}
                         onChange={handleChange}
-                        placeholder="Nickname"
-                        disabled={!isEditing}
-                    />
-                </div>
-
-                <div className="space-y-2">
-                    <Label htmlFor="date_of_birth">Date of Birth</Label>
-                    <Input
-                        id="date_of_birth"
-                        name="date_of_birth"
-                        type="date"
-                        value={formData.date_of_birth || ""}
-                        onChange={handleChange}
+                        placeholder="Username"
                         disabled={!isEditing}
                     />
                 </div>
@@ -185,26 +169,6 @@ export function PersonalInfoForm({ profile, onUpdate }: PersonalInfoFormProps) {
                             <SelectItem value="M">Male</SelectItem>
                             <SelectItem value="F">Female</SelectItem>
                             <SelectItem value="O">Other</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-
-                <div className="space-y-2">
-                    <Label htmlFor="country">Country*</Label>
-                    <Select
-                        disabled={!isEditing}
-                        value={formData.country}
-                        onValueChange={(v) => handleSelectChange("country", v)}
-                    >
-                        <SelectTrigger id="country">
-                            <SelectValue placeholder="Select country" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="UAE">United Arab Emirates</SelectItem>
-                            <SelectItem value="USA">United States</SelectItem>
-                            <SelectItem value="UK">United Kingdom</SelectItem>
-                            <SelectItem value="India">India</SelectItem>
-                            <SelectItem value="Ukraine">Ukraine</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>

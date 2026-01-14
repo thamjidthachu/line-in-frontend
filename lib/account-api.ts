@@ -11,9 +11,7 @@ export interface AccountProfile {
         gender: string | null;
         is_active: boolean;
     };
-    nickname: string;
-    date_of_birth: string | null;
-    country: string;
+    username: string;
     bio: string;
     interests: { id: number; name: string; slug: string }[];
     wallet_balance: string;
@@ -54,15 +52,13 @@ export async function fetchAccountDashboard(): Promise<AccountDashboardData | nu
 }
 
 export async function updateProfile(data: Partial<{
-    nickname: string;
-    date_of_birth: string;
-    country: string;
+    username: string;
     bio: string;
     interest_ids: number[];
 }>): Promise<boolean> {
     try {
-        const response = await apiFetch(`${API_BASE_URL}/account/profile/`, {
-            method: "PATCH",
+        const response = await apiFetch(`${API_BASE_URL}/profile/update/`, {
+            method: "PUT",
             headers: getHeaders(true),
             body: JSON.stringify(data),
         });
@@ -80,8 +76,8 @@ export async function updateCoreProfile(data: Partial<{
     gender: string;
 }>): Promise<boolean> {
     try {
-        const response = await apiFetch(`${API_BASE_URL}/auth/profile-update/`, {
-            method: "PATCH",
+        const response = await apiFetch(`${API_BASE_URL}/profile/update`, {
+            method: "PUT",
             headers: getHeaders(true),
             body: JSON.stringify(data),
         });
@@ -92,21 +88,19 @@ export async function updateCoreProfile(data: Partial<{
     }
 }
 
-export async function updateAvatar(file: File): Promise<string | null> {
+export async function updateAvatar(file: File): Promise<boolean> {
     try {
         const formData = new FormData();
         formData.append("avatar", file);
-        const response = await apiFetch(`${API_BASE_URL}/auth/avatar-update/`, {
-            method: "POST",
+        const response = await apiFetch(`${API_BASE_URL}/profile/avatar/`, {
+            method: "PUT",
             headers: getHeaders(true, true),
             body: formData,
         });
-        if (!response.ok) return null;
-        const data = await response.json();
-        return data.avatar;
+        return response.ok;
     } catch (error) {
         console.error("Error updating avatar:", error);
-        return null;
+        return false;
     }
 }
 

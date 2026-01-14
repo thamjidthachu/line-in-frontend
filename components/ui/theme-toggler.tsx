@@ -18,47 +18,47 @@ export default function ThemeToggle() {
 
   return (
     <label className="switch gap-2">
-      <input 
-        type="checkbox" 
+      <input
+        type="checkbox"
         checked={theme === 'dark'}
         onChange={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
       />
-      <div className="sunmoon"/>
+      <div className="sunmoon" />
       <div className="clouds">
-        <Image 
-          src="theme/cloud_1.svg" 
-          alt="cloud" 
-          width={15} 
-          height={15} 
-          className="cloud cloud-1" 
+        <Image
+          src="/theme/cloud_1.svg"
+          alt="cloud"
+          width={15}
+          height={15}
+          className="cloud cloud-1"
         />
-        <Image 
-          src="theme/cloud_2.svg" 
-          alt="cloud" 
-          width={15} 
-          height={15} 
-          className="cloud cloud-2" 
+        <Image
+          src="/theme/cloud_2.svg"
+          alt="cloud"
+          width={15}
+          height={15}
+          className="cloud cloud-2"
         />
-        <Image 
-          src="theme/cloud_1.svg" 
-          alt="cloud" 
-          width={15} 
-          height={15} 
-          className="cloud cloud-3" 
+        <Image
+          src="/theme/cloud_1.svg"
+          alt="cloud"
+          width={15}
+          height={15}
+          className="cloud cloud-3"
         />
-        <Image 
-          src="theme/cloud_2.svg" 
-          alt="cloud" 
-          width={15} 
-          height={15} 
-          className="cloud cloud-4" 
+        <Image
+          src="/theme/cloud_2.svg"
+          alt="cloud"
+          width={15}
+          height={15}
+          className="cloud cloud-4"
         />
-        <Image 
-          src="theme/stars.svg" 
-          alt="stars" 
-          width={20} 
-          height={20} 
-          className="stars" 
+        <Image
+          src="/theme/stars.svg"
+          alt="stars"
+          width={20}
+          height={20}
+          className="stars"
         />
       </div>
     </label>
