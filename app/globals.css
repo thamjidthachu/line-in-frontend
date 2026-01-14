@@ -103,3 +103,102 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom Theme Toggle */
+.switch {
+  position: relative;
+  width: 65px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  background-color: #5eb6fa; /* Day Sky */
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.5s ease;
+  overflow: hidden;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.2), 0 2px 5px rgba(255,255,255,0.5);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+}
+
+.switch:has(input:checked) {
+  background-color: #1a1a2e; /* Night Sky */
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+/* Sun/Moon Orb */
+.sunmoon {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  background: radial-gradient(circle at 30% 30%, #ffd700, #ffa500); /* Sun */
+  border-radius: 50%;
+  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  box-shadow: 0 0 10px #ffeb3b, inset 0 0 5px rgba(255,255,255,0.5);
+  z-index: 20;
+}
+
+.switch:has(input:checked) .sunmoon {
+  left: calc(100% - 25px);
+  background: radial-gradient(circle at 30% 30%, #f4f6f0, #d0d0d0); /* Moon */
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5), inset 0 -2px 5px rgba(0,0,0,0.1);
+}
+
+/* Clouds Container */
+.clouds {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Stars */
+.stars {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) translateY(-20px);
+  width: 80%;
+  height: 80%;
+  opacity: 0;
+  transition: all 0.5s ease;
+}
+
+.switch:has(input:checked) .stars {
+  opacity: 1;
+  transform: translate(-50%, -50%) translateY(0);
+}
+
+/* Clouds */
+.cloud {
+  position: absolute;
+  opacity: 1;
+  transition: all 0.5s ease;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.1));
+}
+
+.switch:has(input:checked) .cloud {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.cloud-1 { top: 6px; left: 35px; width: 18px; animation: float 3s infinite ease-in-out; }
+.cloud-2 { top: 16px; left: 15px; width: 14px; animation: float 4s infinite ease-in-out reverse; }
+.cloud-3 { top: 4px; left: 10px; width: 12px; animation: float 5s infinite ease-in-out 1s; opacity: 0.8; }
+.cloud-4 { top: 12px; left: 45px; width: 10px; animation: float 3.5s infinite ease-in-out 0.5s; opacity: 0.7; }
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-2px); }
+}
